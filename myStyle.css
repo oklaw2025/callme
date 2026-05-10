@@ -1,0 +1,151 @@
+/* myStyle.css - 中央樣式管理器 */
+
+/* ==================== 主題變數定義 ==================== */
+
+/* 1. 科技深藍 (預設) */
+.theme-default {
+    --bg-color: #0f172a;
+    --card-bg: #1e293b;
+    --header-bg: rgba(15, 23, 42, 0.95);
+    --border-color: #334155;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --accent-gradient: linear-gradient(to right, #60a5fa, #34d399);
+    --accent-color: #3b82f6;
+}
+
+/* 2. 翡翠森林 */
+.theme-forest {
+    --bg-color: #052e16;
+    --card-bg: #064e3b;
+    --header-bg: rgba(5, 46, 22, 0.95);
+    --border-color: #10b981;
+    --text-primary: #ecfdf5;
+    --text-secondary: #a7f3d0;
+    --accent-gradient: linear-gradient(to right, #10b981, #eab308);
+    --accent-color: #10b981;
+}
+
+/* 3. 玫瑰金奢華 */
+.theme-luxury {
+    --bg-color: #2c1a1a;
+    --card-bg: #3f2727;
+    --header-bg: rgba(44, 26, 26, 0.95);
+    --border-color: #c2410c;
+    --text-primary: #fff7ed;
+    --text-secondary: #fbbf24;
+    --accent-gradient: linear-gradient(to right, #f59e0b, #e11d48);
+    --accent-color: #f59e0b;
+}
+
+/* 4. 極簡白晝 */
+.theme-light {
+    --bg-color: #f8fafc;
+    --card-bg: #ffffff;
+    --header-bg: rgba(248, 250, 252, 0.95);
+    --border-color: #e2e8f0;
+    --text-primary: #0f172a;
+    --text-secondary: #64748b;
+    --accent-gradient: linear-gradient(to right, #2563eb, #7c3aed);
+    --accent-color: #2563eb;
+}
+
+/* 5. 幻彩紫羅蘭 */
+.theme-cyber {
+    --bg-color: #1a1633;
+    --card-bg: #2e2b5e;
+    --header-bg: rgba(26, 22, 51, 0.95);
+    --border-color: #8b5cf6;
+    --text-primary: #e0e7ff;
+    --text-secondary: #c4d0ff;
+    --accent-gradient: linear-gradient(to right, #c026d3, #ec4899);
+    --accent-color: #a855f7;
+}
+
+/* ==================== 全域樣式 ==================== */
+body {
+    background-color: var(--bg-color) !important;
+    color: var(--text-primary) !important;
+    transition: background-color 0.4s ease;
+}
+
+/* 強制覆蓋 Tailwind 預設背景 */
+html[data-theme] body,
+body.theme-default,
+body.theme-forest,
+body.theme-luxury,
+body.theme-light,
+body.theme-cyber {
+    background-color: var(--bg-color) !important;
+}
+
+/* 卡片與 Header */
+.custom-card {
+    background-color: var(--card-bg) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+.custom-header {
+    background-color: var(--header-bg) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+
+.text-gradient {
+    background: var(--accent-gradient) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+.btn-accent {
+    background-color: var(--accent-color) !important;
+    color: white !important;
+}
+
+.text-dim {
+    color: var(--text-secondary) !important;
+}
+
+/* ==================== 主題切換按鈕優化 ==================== */
+.theme-switch-btn {
+    padding: 8px 16px;
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    border: 1px solid var(--border-color);
+    background-color: rgba(255,255,255,0.08);
+    color: var(--text-primary);
+}
+
+.theme-switch-btn:hover {
+    background-color: rgba(255,255,255,0.15);
+    transform: scale(1.05);
+}
+
+.theme-switch-btn.active {
+    background-color: var(--accent-color) !important;
+    color: white !important;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+/* Light 模式特別處理 */
+.theme-light .theme-switch-btn {
+    background-color: rgba(0,0,0,0.06);
+    color: #0f172a;
+}
+
+.theme-light .theme-switch-btn:hover {
+    background-color: rgba(0,0,0,0.12);
+}
+
+.theme-light .theme-switch-btn.active {
+    background-color: var(--accent-color) !important;
+    color: white !important;
+}
+
+/* ==================== 其他優化 ==================== */
+.custom-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.15);
+}
