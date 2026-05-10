@@ -9,10 +9,10 @@ createApp({
         const themes = {
             
             'theme-light': '極簡白晝',
-            'theme-cyber': '幻彩紫羅蘭'
+            'theme-cyber': '幻彩紫羅蘭',
             'theme-default': '科技深藍',
             'theme-forest': '翡翠森林',
-            'theme-luxury': '玫瑰金奢華',
+            'theme-luxury': '玫瑰金奢華'
         };
 
         // 主題切換監聽 + 持久化
