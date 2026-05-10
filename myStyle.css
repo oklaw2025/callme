@@ -2,6 +2,19 @@
 
 /* ==================== 主題變數定義 ==================== */
 
+/* 4. 極簡白晝 */
+.theme-light {
+    --bg-color: #f8fafc;
+    --card-bg: #ffffff;
+    --header-bg: rgba(248, 250, 252, 0.95);
+    --border-color: #e2e8f0;
+    --text-primary: #0f172a;
+    --text-secondary: #64748b;
+    --accent-gradient: linear-gradient(to right, #2563eb, #7c3aed);
+    --accent-color: #2563eb;
+}
+
+
 /* 1. 科技深藍 (預設) */
 .theme-default {
     --bg-color: #0f172a;
@@ -38,17 +51,6 @@
     --accent-color: #f59e0b;
 }
 
-/* 4. 極簡白晝 */
-.theme-light {
-    --bg-color: #f8fafc;
-    --card-bg: #ffffff;
-    --header-bg: rgba(248, 250, 252, 0.95);
-    --border-color: #e2e8f0;
-    --text-primary: #0f172a;
-    --text-secondary: #64748b;
-    --accent-gradient: linear-gradient(to right, #2563eb, #7c3aed);
-    --accent-color: #2563eb;
-}
 
 /* 5. 幻彩紫羅蘭 */
 .theme-cyber {
@@ -71,10 +73,11 @@ body {
 
 /* 強制覆蓋 Tailwind 預設背景 */
 html[data-theme] body,
+
+body.theme-light,
 body.theme-default,
 body.theme-forest,
 body.theme-luxury,
-body.theme-light,
 body.theme-cyber {
     background-color: var(--bg-color) !important;
 }
