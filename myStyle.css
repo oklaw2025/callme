@@ -178,3 +178,71 @@ span.bg-black\/20 {
         margin-bottom: 1.5rem;
     }
 }
+/* ==================== 底部聯絡區 ==================== */
+.contact-section {
+    background: linear-gradient(135deg, var(--contact-start), var(--contact-end));
+    border: 1px solid var(--border-color);
+    box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.4);
+    transition: all 0.4s ease;
+}
+
+.contact-section h2 {
+    color: var(--text-primary);
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* 聯絡按鈕 */
+.contact-btn {
+    padding: 1rem 2rem;
+    border-radius: 1rem;
+    font-weight: 700;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3);
+}
+
+.contact-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.4);
+}
+
+.phone-btn {
+    background-color: #ffffff;
+    color: #1e40af;
+}
+
+.whatsapp-btn {
+    background-color: #25D366;
+    color: white;
+}
+
+/* 各主題專屬顏色 */
+.theme-default .contact-section {
+    --contact-start: #1e40af;
+    --contact-end: #312e81;
+}
+
+.theme-forest .contact-section {
+    --contact-start: #065f46;
+    --contact-end: #166534;
+}
+
+.theme-luxury .contact-section {
+    --contact-start: #5b2c2c;
+    --contact-end: #854d0e;
+}
+
+.theme-light .contact-section {
+    --contact-start: #3b82f6;
+    --contact-end: #6366f1;
+    border-color: #cbd5e1;
+}
+
+.theme-light .phone-btn {
+    color: #1e3a8a;
+}
+
+.theme-cyber .contact-section {
+    --contact-start: #4338ca;
+    --contact-end: #7c3aed;
+}
