@@ -15,7 +15,7 @@
 }
 
 /* 2. 翡翠森林 (Forest) */
-body.theme-forest {
+.theme-forest {
     --bg-color: #064e3b;
     --card-bg: #065f46;
     --header-bg: rgba(6, 78, 59, 0.8);
@@ -27,7 +27,7 @@ body.theme-forest {
 }
 
 /* 3. 玫瑰金奢華 (Luxury) */
-body.theme-luxury {
+.theme-luxury {
     --bg-color: #2d1b1b;
     --card-bg: #3d2b2b;
     --header-bg: rgba(45, 27, 27, 0.8);
@@ -39,7 +39,7 @@ body.theme-luxury {
 }
 
 /* 4. 極簡白晝 (Light) */
-body.theme-light {
+.theme-light {
     --bg-color: #f1f5f9;
     --card-bg: #ffffff;
     --header-bg: rgba(248, 250, 252, 0.8);
@@ -51,7 +51,7 @@ body.theme-light {
 }
 
 /* 5. 幻彩紫羅蘭 (Cyber) */
-body.theme-cyber {
+.theme-cyber {
     --bg-color: #1e1b4b;
     --card-bg: #312e81;
     --header-bg: rgba(30, 27, 75, 0.8);
