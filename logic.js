@@ -4,7 +4,7 @@ const { createApp, ref, computed, watch } = Vue;
 createApp({
     setup() {
         // 1. 風格切換狀態
-        const currentTheme = ref('theme-default');
+        const currentTheme = ref('theme-forest');
         const themes = {
             'theme-default': '科技深藍',
             'theme-forest': '翡翠森林',
