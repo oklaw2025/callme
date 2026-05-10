@@ -115,7 +115,7 @@
             </div>
         </div>
 
-        <!-- 分頁 -->
+        <!-- 分頁與無結果 -->
         <div v-if="hasMore" class="mt-12 text-center">
             <button @click="loadMore" 
                     class="custom-card border-none px-12 py-4 rounded-full font-bold shadow-xl hover:scale-105 transition">
@@ -156,6 +156,7 @@
     </transition>
 </div>
 
+<!-- === 重要：腳本移到這裡 === -->
 <script src="data.js"></script>
 <script src="logic.js"></script>
 
