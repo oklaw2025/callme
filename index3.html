@@ -28,10 +28,12 @@
         <div class="container mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="font-black text-2xl text-gradient">搵樓！搵我O.K.LAW！</div>
             <div class="flex flex-wrap justify-center gap-2">
-                <button v-for="(name, key) in themes" 
-                        @click="currentTheme = key" 
-                        :class="currentTheme === key ? 'ring-2 ring-white/80 scale-105' : 'opacity-75 hover:opacity-100'"
-                        class="px-4 py-1.5 rounded-full text-xs font-bold transition-all border border-white/20 bg-slate-800/80">
+                <button 
+                    v-for="(name, key) in themes" 
+                    :key="key"
+                    @click="currentTheme = key"
+                    :class="currentTheme === key ? 'active' : ''"
+                    class="theme-switch-btn">
                     {{ name }}
                 </button>
             </div>
