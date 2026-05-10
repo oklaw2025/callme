@@ -7,7 +7,7 @@ createApp({
         const currentTheme = ref(localStorage.getItem('oklaw-theme') || 'theme-default');
 
         const themes = {
-            'theme-default': '科技深藍',
+            'theme-default': 'blue',
             'theme-forest': '翡翠森林',
             'theme-luxury': '玫瑰金奢華',
             'theme-light': '極簡白晝',
