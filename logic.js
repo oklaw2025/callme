@@ -7,11 +7,12 @@ createApp({
         const currentTheme = ref(localStorage.getItem('oklaw-theme') || 'theme-light');
 
         const themes = {
+            
+            'theme-light': '極簡白晝',
+            'theme-cyber': '幻彩紫羅蘭'
             'theme-default': '科技深藍',
             'theme-forest': '翡翠森林',
             'theme-luxury': '玫瑰金奢華',
-            'theme-light': '極簡白晝',
-            'theme-cyber': '幻彩紫羅蘭'
         };
 
         // 主題切換監聽 + 持久化
