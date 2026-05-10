@@ -1,7 +1,7 @@
 /* myStyle.css - 中央樣式管理器 */
 
 /* 基礎定義 - 預設變數 (科技深藍) */
-:root {
+.theme-default {
     --bg-color: #0f172a;
     --card-bg: #1e293b;
     --header-bg: rgba(15, 23, 42, 0.8);
