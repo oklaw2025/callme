@@ -4,7 +4,7 @@ const { createApp, ref, computed, watch } = Vue;
 createApp({
     setup() {
         // ==================== 主題切換 (已優化) ====================
-        const currentTheme = ref(localStorage.getItem('oklaw-theme') || 'theme-default');
+        const currentTheme = ref(localStorage.getItem('oklaw-theme') || 'theme-light');
 
         const themes = {
             'theme-default': '科技深藍',
