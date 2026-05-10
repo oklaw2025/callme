@@ -220,3 +220,20 @@ body.theme-cyber {
     --contact-start: #4338ca;
     --contact-end: #7c3aed;
 }
+/* ==================== Sticky Footer 設定 ==================== */
+.min-h-screen.flex {
+    min-height: 100vh;
+}
+
+.contact-section {
+    background: linear-gradient(135deg, var(--contact-start, #1e40af), var(--contact-end, #312e81));
+    border-top: 1px solid var(--border-color);
+    width: 100%;
+    margin-top: auto;
+    box-shadow: 0 -10px 15px -3px rgb(0 0 0 / 0.3);
+}
+
+/* 確保在 Light 模式也有好看的陰影 */
+.theme-light .contact-section {
+    box-shadow: 0 -4px 6px -1px rgb(0 0 0 / 0.1);
+}
