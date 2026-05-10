@@ -64,31 +64,31 @@
 
 /* 全域套用變數 */
 body {
-    background-color: var(--bg-color);
-    color: var(--text-primary);
+    background-color: var(--bg-color) !important;
+    color: var(--text-primary)  !important;
     transition: all 0.3s ease;
 }
 
 .custom-card {
-    background-color: var(--card-bg);
-    border: 1px solid var(--border-color);
+    background-color: var(--card-bg)  !important;
+    border: 1px solid var(--border-color)  !important;
 }
 
 .custom-header {
-    background-color: var(--header-bg);
-    border-bottom: 1px solid var(--border-color);
+    background-color: var(--header-bg)  !important;
+    border-bottom: 1px solid var(--border-color)  !important;
 }
 
 .text-gradient {
-    background: var(--accent-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    background: var(--accent-gradient)  !important;
+    -webkit-background-clip: text  !important;
+    -webkit-text-fill-color: transparent  !important;
 }
 
 .btn-accent {
-    background-color: var(--accent-color);
+    background-color: var(--accent-color)  !important;
 }
 
 .text-dim {
-    color: var(--text-secondary);
+    color: var(--text-secondary)  !important;
 }
