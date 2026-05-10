@@ -28,14 +28,14 @@
 
 /* 3. 玫瑰金奢華 (Luxury) */
 .theme-luxury {
-    --bg-color: #2d1b1b !important;
-    --card-bg: #3d2b2b !important;
-    --header-bg: rgba(45, 27, 27, 0.8) !important;
-    --border-color: #92400e !important;
-    --text-primary: #fff7ed !important;
-    --text-secondary: #fbbf24 !important;
-    --accent-gradient: linear-gradient(to right, #f59e0b, #fb7185) !important;
-    --accent-color: #f59e0b !important;
+    --bg-color: #2d1b1b ;
+    --card-bg: #3d2b2b ;
+    --header-bg: rgba(45, 27, 27, 0.8) ;
+    --border-color: #92400e ;
+    --text-primary: #fff7ed ;
+    --text-secondary: #fbbf24 ;
+    --accent-gradient: linear-gradient(to right, #f59e0b, #fb7185) ;
+    --accent-color: #f59e0b ;
 }
 
 /* 4. 極簡白晝 (Light) */
