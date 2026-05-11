@@ -16,9 +16,9 @@ const rawItems = [
                     tags: ['九龍塘', '三房', '全新裝修'], 
                     images: 
                     [
-                        'https://oklaw2025.github.io/callme/photo1.jpg',
-                        'https://oklaw2025.github.io/callme/photo1.jpg',
-                        'https://oklaw2025.github.io/callme/photo1.jpg',
+                        'https://oklaw2025.github.io/callme/id2/photo1.jpg',
+                        'https://oklaw2025.github.io/callme/id2/photo2.jpg',
+                        
   
                     ],
                     videoUrl: '' // 圖片模式可留空
