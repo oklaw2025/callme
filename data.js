@@ -1,6 +1,27 @@
 // data.js
 const rawItems = [
-              
+                { 
+                    id: 14, 
+                    type: 'images', 
+                    title: 'id: 14', 
+                    tags: ['1', '2', '3'], 
+                    images: 
+                    [
+                        'https://oklaw2025.github.io/callme/id14/photo1.jpg',
+                        'https://oklaw2025.github.io/callme/id14/photo2.jpg',
+        \
+  
+                    ],
+                    videoUrl: '' // 圖片模式可留空
+                },
+               {   
+                    id: 13, 
+                    type: 'video', 
+                    title: '10沙田複式戶', 
+                    tags: ['豪宅', '特色戶'], 
+                    videoUrl: 'https://youtu.be/cFKQCfP5sZA', 
+                    embedCode: '<iframe src="https://www.youtube.com/embed/cFKQCfP5sZA"></iframe>' 
+                },
                 {   
                     id: 1, 
                     type: 'video', 
