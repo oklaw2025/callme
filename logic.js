@@ -97,14 +97,14 @@ createApp({
         // 分享功能
         const shareWhatsApp = (item) => {
             const content = item.type === 'video' ? `影片：${item.videoUrl}` : `相片盤源`;
-            const text = encodeURIComponent(`搵樓！搵我O.K.LAW！\n單位：${item.title}\n${content}\n電話：54093210`);
+            const text = encodeURIComponent(`搵樓！搵我O.K.LAW！\n單位：${item.title}\n${content}\n電話：95705738`);
             window.open(`https://wa.me/?text=${text}`, '_blank');
         };
 
         const shareWeChat = (item) => {
             const dummy = document.createElement('textarea');
             document.body.appendChild(dummy);
-            dummy.value = `搵樓！O.K.LAW 幫到手!\n單位：${item.title}\n電話：54093210`;
+            dummy.value = `搵樓！搵O.K.LAW 幫到手!\n單位：${item.title}\n電話：95705738`;
             dummy.select();
             document.execCommand('copy');
             document.body.removeChild(dummy);
