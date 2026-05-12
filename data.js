@@ -8,9 +8,7 @@ const rawItems = [
                     images: 
                     [
                         'https://oklaw2025.github.io/callme/id14/photo1.jpg',
-                        'https://oklaw2025.github.io/callme/id14/photo2.jpg',
-        \
-  
+                        'https://oklaw2025.github.io/callme/id14/photo2.jpg',  
                     ],
                     videoUrl: '' // 圖片模式可留空
                 },
