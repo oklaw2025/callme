@@ -116,7 +116,7 @@ createApp({
         // ==================== WhatsApp 功能 ====================
         // 1. 分享給朋友
         const shareToFriend = (item) => {
-            const content =  `https://https://oklaw2025.github.io/callme/index2.html?id=${item.id}`;
+            const content =  `https://oklaw2025.github.io/callme/index2.html?id=${item.id}`;
             
             const text = encodeURIComponent(
                 `搵樓！搵我 O.K.LAW！\n\n` +
@@ -131,7 +131,7 @@ createApp({
 
         // 2. 直接查詢詳情
         const inquireDetail = (item) => {
-            const content =  `https://https://oklaw2025.github.io/callme/index2.html?id=${item.id}`;
+            const content =  `https://oklaw2025.github.io/callme/index2.html?id=${item.id}`;
             
             const text = encodeURIComponent(
                 `你好 O.K.LAW，\n\n` +
