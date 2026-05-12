@@ -1,25 +1,31 @@
-// logic.js - 核心邏輯管理器
-const { createApp, ref, computed, watch } = Vue;
+// logic.js - 核心邏輯管理器（已支援單一分享模式）
+const { createApp, ref, computed, watch, onMounted } = Vue;
 
 createApp({
     setup() {
-        // ==================== 主題切換 (已優化) ====================
+        // ==================== 主題切換 ====================
         const currentTheme = ref('theme-light');
 
         const themes = {
-            
-            'theme-light': '極簡白晝',
-            'theme-cyber': '幻彩紫羅蘭',
             'theme-default': '科技深藍',
             'theme-forest': '翡翠森林',
-            'theme-luxury': '玫瑰金奢華'
+            'theme-luxury': '玫瑰金奢華',
+            'theme-light': '極簡白晝',
+            'theme-cyber': '幻彩紫羅蘭'
         };
 
-        // 主題切換監聽 + 持久化
+        // 主題持久化
         watch(currentTheme, (newTheme) => {
             localStorage.setItem('oklaw-theme', newTheme);
             document.documentElement.setAttribute('data-theme', newTheme);
         }, { immediate: true });
+
+        // ==================== 單一盤源模式（?id=xx）===================
+        const urlParams = new URLSearchParams(window.location.search);
+        const singleId = urlParams.get('id') ? parseInt(urlParams.get('id')) : null;
+        
+        const singleItemMode = ref(!!singleId);
+        const currentItem = ref(null);
 
         // ==================== 數據與篩選 ====================
         const items = ref(rawItems);
@@ -35,8 +41,15 @@ createApp({
             index: 0 
         });
 
-        // 篩選後結果
+        // ==================== 如果是單一模式，載入對應資料 ====================
+        if (singleId) {
+            currentItem.value = rawItems.find(item => item.id === singleId);
+        }
+
+        // ==================== 計算屬性 ====================
         const filteredItems = computed(() => {
+            if (singleItemMode.value) return [];
+            
             let result = [...items.value];
             if (selectedTags.value.length > 0) {
                 result = result.filter(v => {
@@ -55,7 +68,14 @@ createApp({
         const hasMore = computed(() => displayedItems.value.length < filteredItems.value.length);
         const remainingCount = computed(() => filteredItems.value.length - displayedItems.value.length);
 
+        // ==================== 方法 ====================
         const loadMore = () => { currentPage.value++; };
+
+        const toggleTag = (tag) => {
+            const i = selectedTags.value.indexOf(tag);
+            if (i > -1) selectedTags.value.splice(i, 1);
+            else selectedTags.value.push(tag);
+        };
 
         watch([selectedTags, matchMode], () => { 
             currentPage.value = 1; 
@@ -67,15 +87,9 @@ createApp({
             return Array.from(s).sort();
         });
 
-        const toggleTag = (tag) => {
-            const i = selectedTags.value.indexOf(tag);
-            if (i > -1) selectedTags.value.splice(i, 1);
-            else selectedTags.value.push(tag);
-        };
-
         // 燈箱功能
         const openGallery = (item) => {
-            gallery.value.images = item.images;
+            gallery.value.images = item.images || [];
             gallery.value.index = 0;
             gallery.value.isOpen = true;
             document.body.style.overflow = 'hidden';
@@ -94,23 +108,13 @@ createApp({
             gallery.value.index = (gallery.value.index - 1 + gallery.value.images.length) % gallery.value.images.length;
         };
 
-        // 分享功能
-        const shareWhatsApp = (item) => {
-            const content = item.type === 'video' ? `影片：${item.videoUrl}` : `相片盤源`;
-            const text = encodeURIComponent(`搵樓！搵我O.K.LAW！\n單位：${item.title}\n${content}\n電話：95705738`);
-            window.open(`https://wa.me/?text=${text}`, '_blank');
+        // 返回列表
+        const exitSingleMode = () => {
+            window.location.href = 'index3.html';
         };
 
-        const shareWeChat = (item) => {
-            const dummy = document.createElement('textarea');
-            document.body.appendChild(dummy);
-            dummy.value = `搵樓！搵O.K.LAW 幫到手!\n單位：${item.title}\n電話：95705738`;
-            dummy.select();
-            document.execCommand('copy');
-            document.body.removeChild(dummy);
-            alert('✅ 已複製推薦文字，請貼上至微信！');
-        };
-                // 分享給朋友（原本的分享功能）
+        // ==================== WhatsApp 功能 ====================
+        // 1. 分享給朋友
         const shareToFriend = (item) => {
             const content = item.type === 'video' 
                 ? `影片：${item.videoUrl}` 
@@ -120,13 +124,14 @@ createApp({
                 `搵樓！搵我 O.K.LAW！\n\n` +
                 `🔥 推薦單位：${item.title}\n` +
                 `${content}\n\n` +
-                `有興趣可以聯絡：5409 3210`
+                `有興趣可以聯絡：5409 3210\n` +
+                `https://你的網址/index3.html?id=${item.id}`
             );
             
             window.open(`https://wa.me/?text=${text}`, '_blank');
         };
-        
-        // 直接查詢詳情（聯絡你本人）
+
+        // 2. 直接查詢詳情
         const inquireDetail = (item) => {
             const content = item.type === 'video' 
                 ? `影片：${item.videoUrl}` 
@@ -134,7 +139,7 @@ createApp({
             
             const text = encodeURIComponent(
                 `你好 O.K.LAW，\n\n` +
-                `我想查詢呢個單位詳情：\n` +
+                `我想查詢以下單位詳情：\n` +
                 `${item.title}\n` +
                 `${content}\n\n` +
                 `請提供價錢、面積、睇樓時間等資料，謝謝！`
@@ -144,8 +149,11 @@ createApp({
         };
 
         return { 
+            // 主題
             currentTheme, 
-            themes, 
+            themes,
+            
+            // 列表模式
             selectedTags, 
             allTags, 
             toggleTag, 
@@ -155,10 +163,17 @@ createApp({
             hasMore, 
             loadMore, 
             remainingCount,
-            shareToFriend,     // 新增
-            inquireDetail,     // 新增
-            //shareWhatsApp, 
-            //shareWeChat,
+            
+            // 單一模式
+            singleItemMode,
+            currentItem,
+            exitSingleMode,
+            
+            // 分享功能
+            shareToFriend,
+            inquireDetail,
+            
+            // 燈箱
             gallery, 
             openGallery, 
             closeGallery, 
