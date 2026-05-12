@@ -110,6 +110,38 @@ createApp({
             document.body.removeChild(dummy);
             alert('✅ 已複製推薦文字，請貼上至微信！');
         };
+                // 分享給朋友（原本的分享功能）
+        const shareToFriend = (item) => {
+            const content = item.type === 'video' 
+                ? `影片：${item.videoUrl}` 
+                : `相片盤源（共 ${item.images ? item.images.length : 0} 張）`;
+            
+            const text = encodeURIComponent(
+                `搵樓！搵我 O.K.LAW！\n\n` +
+                `🔥 推薦單位：${item.title}\n` +
+                `${content}\n\n` +
+                `有興趣可以聯絡：5409 3210`
+            );
+            
+            window.open(`https://wa.me/?text=${text}`, '_blank');
+        };
+        
+        // 直接查詢詳情（聯絡你本人）
+        const inquireDetail = (item) => {
+            const content = item.type === 'video' 
+                ? `影片：${item.videoUrl}` 
+                : `相片盤源（共 ${item.images ? item.images.length : 0} 張）`;
+            
+            const text = encodeURIComponent(
+                `你好 O.K.LAW，\n\n` +
+                `我想查詢呢個單位詳情：\n` +
+                `${item.title}\n` +
+                `${content}\n\n` +
+                `請提供價錢、面積、睇樓時間等資料，謝謝！`
+            );
+            
+            window.open(`https://wa.me/85254093210?text=${text}`, '_blank');
+        };
 
         return { 
             currentTheme, 
@@ -123,8 +155,10 @@ createApp({
             hasMore, 
             loadMore, 
             remainingCount,
-            shareWhatsApp, 
-            shareWeChat,
+            shareToFriend,     // 新增
+            inquireDetail,     // 新增
+            //shareWhatsApp, 
+            //shareWeChat,
             gallery, 
             openGallery, 
             closeGallery, 
