@@ -116,16 +116,14 @@ createApp({
         // ==================== WhatsApp 功能 ====================
         // 1. 分享給朋友
         const shareToFriend = (item) => {
-            const content = item.type === 'video' 
-                ? `影片：${item.videoUrl}` 
-                : `相片盤源（共 ${item.images ? item.images.length : 0} 張）`;
+            const content =  `https://https://oklaw2025.github.io/callme/index2.html?id=${item.id}`;
             
             const text = encodeURIComponent(
                 `搵樓！搵我 O.K.LAW！\n\n` +
                 `🔥 推薦單位：${item.title}\n` +
                 `${content}\n\n` +
-                `有興趣可以聯絡：5409 3210\n` +
-                `https://你的網址/index3.html?id=${item.id}`
+                `有興趣可以聯絡：9570 5738\n` 
+
             );
             
             window.open(`https://wa.me/?text=${text}`, '_blank');
@@ -133,9 +131,7 @@ createApp({
 
         // 2. 直接查詢詳情
         const inquireDetail = (item) => {
-            const content = item.type === 'video' 
-                ? `影片：${item.videoUrl}` 
-                : `相片盤源（共 ${item.images ? item.images.length : 0} 張）`;
+            const content =  `https://https://oklaw2025.github.io/callme/index2.html?id=${item.id}`;
             
             const text = encodeURIComponent(
                 `你好 O.K.LAW，\n\n` +
@@ -145,7 +141,7 @@ createApp({
                 `請提供價錢、面積、睇樓時間等資料，謝謝！`
             );
             
-            window.open(`https://wa.me/85254093210?text=${text}`, '_blank');
+            window.open(`https://wa.me/85295705738?text=${text}`, '_blank');
         };
 
         return { 
