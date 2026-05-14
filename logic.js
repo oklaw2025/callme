@@ -19,7 +19,17 @@ createApp({
         }, { immediate: true });
 
         // ==================== 數據 ====================
-        const items = ref(rawItems.map(item => ({ ...item })));
+        const items = ref(rawItems.map(item => {
+            const processed = { ...item };
+            if (item.type === 'images' && item.baseFolder) {
+                const numPhotos = Math.max(1, item.numPhotos || 8);
+                processed.images = [`https://oklaw2025.github.io/callme/${item.baseFolder}/photo1.jpg`];
+                for (let i = 2; i <= numPhotos; i++) {
+                    processed.images.push(`https://oklaw2025.github.io/callme/${item.baseFolder}/photo${i}.jpeg`);
+                }
+            }
+            return processed;
+        }));
 
         // ==================== 單一模式 ====================
         const urlParams = new URLSearchParams(window.location.search);
@@ -30,15 +40,12 @@ createApp({
         // ==================== 狀態 ====================
         const selectedTags = ref([]);
         const matchMode = ref('OR');
-        const priceRange = ref({ min: null, max: null });
-        const areaRange = ref({ min: null, max: null });
-
         const pageSize = 6;
         const currentPage = ref(1);
         const gallery = ref({ isOpen: false, images: [], index: 0 });
 
         // ==================== 引入分拆邏輯 ====================
-        const { filteredItems, groupedTags } = window.createFilters(items, selectedTags, matchMode, priceRange, areaRange);
+        const { filteredItems, groupedTags } = window.createFilters(items, selectedTags, matchMode);
         const utils = window.createUtils();
 
         const displayedItems = computed(() => filteredItems.value.slice(0, currentPage.value * pageSize));
@@ -55,24 +62,15 @@ createApp({
 
         const loadMore = () => currentPage.value++;
 
-        watch([selectedTags, matchMode, priceRange, areaRange], () => {
-            currentPage.value = 1;
-        }, { deep: true });
+        watch([selectedTags, matchMode], () => currentPage.value = 1, { deep: true });
 
         const exitSingleMode = () => window.location.href = 'index.html';
 
-        // 清空所有篩選
-        const clearAllFilters = () => {
-            selectedTags.value = [];
-            priceRange.value = { min: null, max: null };
-            areaRange.value = { min: null, max: null };
-        };
-
         return { 
             currentTheme, themes,
-            selectedTags, matchMode, priceRange, areaRange,
+            selectedTags, matchMode,
             displayedItems, filteredItems, hasMore, loadMore, remainingCount,
-            groupedTags, toggleTag, clearAllFilters,
+            groupedTags, toggleTag,
             singleItemMode, currentItem, exitSingleMode,
             gallery,
             openGallery: (item) => utils.openGallery(gallery, item),
