@@ -112,18 +112,18 @@
 
         <main class="container mx-auto p-4 flex-1">
             <!-- 篩選器 -->
+  
             <div class="custom-card rounded-2xl p-6 mb-8 shadow-2xl">
-                <div class="filter-header flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                     <h2 class="font-bold text-xl flex items-center">🎯 精確搵樓</h2>
                     
-                    <!-- 清空條件按鈕：只有選取條件時才顯示 -->
                     <button 
-                        v-if="selectedTags.length > 0"
-                        @click="selectedTags = []" 
-                        class="px-5 py-2 rounded-lg text-sm border border-slate-500 text-dim hover:bg-slate-700 whitespace-nowrap flex-shrink-0">
-                        清空條件
+                        v-if="selectedTags.length > 0 || priceRange.min || priceRange.max || areaRange.min || areaRange.max"
+                        @click="clearAllFilters" 
+                        class="px-5 py-2 rounded-lg text-sm border border-slate-500 text-dim hover:bg-slate-700 whitespace-nowrap">
+                        清空全部條件
                     </button>
-
+            
                     <div class="flex items-center bg-black/20 p-1 rounded-xl flex-shrink-0">
                         <button @click="matchMode = 'OR'" 
                                 :class="matchMode === 'OR' ? 'btn-accent text-white' : 'text-dim'" 
@@ -133,12 +133,41 @@
                                 class="px-4 py-2 rounded-lg text-sm font-bold">同時符合</button>
                     </div>
                 </div>
-
-                <!-- 分組標籤 -->
-                <div class="space-y-1">
+            
+                <!-- 價格範圍 Slider -->
+                <div class="mb-8">
+                    <div class="flex justify-between text-sm mb-2">
+                        <span class="font-medium">💰 價格範圍 (萬)</span>
+                        <span class="text-dim">{{ priceRange.min || '不限' }} - {{ priceRange.max || '不限' }} 萬</span>
+                    </div>
+                    <div class="flex gap-4 items-center">
+                        <input type="range" v-model="priceRange.min" min="0" max="2000" step="10" 
+                               class="w-full accent-blue-500">
+                        <input type="range" v-model="priceRange.max" min="0" max="2000" step="10" 
+                               class="w-full accent-blue-500">
+                    </div>
+                </div>
+            
+                <!-- 面積範圍 Slider -->
+                <div class="mb-8">
+                    <div class="flex justify-between text-sm mb-2">
+                        <span class="font-medium">📐 面積範圍 (呎)</span>
+                        <span class="text-dim">{{ areaRange.min || '不限' }} - {{ areaRange.max || '不限' }} 呎</span>
+                    </div>
+                    <div class="flex gap-4 items-center">
+                        <input type="range" v-model="areaRange.min" min="100" max="1500" step="5" 
+                               class="w-full accent-blue-500">
+                        <input type="range" v-model="areaRange.max" min="100" max="1500" step="5" 
+                               class="w-full accent-blue-500">
+                    </div>
+                </div>
+            
+                <!-- 樓層與其他標籤 -->
+                <div class="space-y-6">
                     <!-- 樓層 -->
                     <div v-if="groupedTags.floor.length > 0">
-                        <div class="flex flex-wrap gap-0">
+                        <div class="text-sm font-medium mb-2 text-dim">🏢 樓層</div>
+                        <div class="flex flex-wrap gap-2">
                             <button v-for="tag in groupedTags.floor" :key="tag" 
                                     @click="toggleTag(tag)"
                                     :class="selectedTags.includes(tag) ? 'btn-accent text-white' : 'bg-black/10 text-dim border border-slate-500/50'"
@@ -147,87 +176,21 @@
                             </button>
                         </div>
                     </div>
-
-                    <!-- 價錢 -->
-                    <!-- 篩選器 -->
-<div class="custom-card rounded-2xl p-6 mb-8 shadow-2xl">
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <h2 class="font-bold text-xl flex items-center">🎯 精確搵樓</h2>
-        
-        <button 
-            v-if="selectedTags.length > 0 || priceRange.min || priceRange.max || areaRange.min || areaRange.max"
-            @click="clearAllFilters" 
-            class="px-5 py-2 rounded-lg text-sm border border-slate-500 text-dim hover:bg-slate-700 whitespace-nowrap">
-            清空全部條件
-        </button>
-
-        <div class="flex items-center bg-black/20 p-1 rounded-xl flex-shrink-0">
-            <button @click="matchMode = 'OR'" 
-                    :class="matchMode === 'OR' ? 'btn-accent text-white' : 'text-dim'" 
-                    class="px-4 py-2 rounded-lg text-sm font-bold">部分符合</button>
-            <button @click="matchMode = 'AND'" 
-                    :class="matchMode === 'AND' ? 'btn-accent text-white' : 'text-dim'" 
-                    class="px-4 py-2 rounded-lg text-sm font-bold">同時符合</button>
-        </div>
-    </div>
-
-    <!-- 價格範圍 Slider -->
-    <div class="mb-8">
-        <div class="flex justify-between text-sm mb-2">
-            <span class="font-medium">💰 價格範圍 (萬)</span>
-            <span class="text-dim">{{ priceRange.min || '不限' }} - {{ priceRange.max || '不限' }} 萬</span>
-        </div>
-        <div class="flex gap-4 items-center">
-            <input type="range" v-model="priceRange.min" min="0" max="2000" step="10" 
-                   class="w-full accent-blue-500">
-            <input type="range" v-model="priceRange.max" min="0" max="2000" step="10" 
-                   class="w-full accent-blue-500">
-        </div>
-    </div>
-
-    <!-- 面積範圍 Slider -->
-    <div class="mb-8">
-        <div class="flex justify-between text-sm mb-2">
-            <span class="font-medium">📐 面積範圍 (呎)</span>
-            <span class="text-dim">{{ areaRange.min || '不限' }} - {{ areaRange.max || '不限' }} 呎</span>
-        </div>
-        <div class="flex gap-4 items-center">
-            <input type="range" v-model="areaRange.min" min="100" max="1500" step="5" 
-                   class="w-full accent-blue-500">
-            <input type="range" v-model="areaRange.max" min="100" max="1500" step="5" 
-                   class="w-full accent-blue-500">
-        </div>
-    </div>
-
-    <!-- 樓層與其他標籤 -->
-    <div class="space-y-6">
-        <!-- 樓層 -->
-        <div v-if="groupedTags.floor.length > 0">
-            <div class="text-sm font-medium mb-2 text-dim">🏢 樓層</div>
-            <div class="flex flex-wrap gap-2">
-                <button v-for="tag in groupedTags.floor" :key="tag" 
-                        @click="toggleTag(tag)"
-                        :class="selectedTags.includes(tag) ? 'btn-accent text-white' : 'bg-black/10 text-dim border border-slate-500/50'"
-                        class="px-4 py-2 rounded-lg text-sm transition-all">
-                    {{ tag }}
-                </button>
+            
+                    <!-- 其他 -->
+                    <div v-if="groupedTags.others.length > 0">
+                        <div class="text-sm font-medium mb-2 text-dim">🏷️ 其他條件</div>
+                        <div class="flex flex-wrap gap-2">
+                            <button v-for="tag in groupedTags.others" :key="tag" 
+                                    @click="toggleTag(tag)"
+                                    :class="selectedTags.includes(tag) ? 'btn-accent text-white' : 'bg-black/10 text-dim border border-slate-500/50'"
+                                    class="px-4 py-2 rounded-lg text-sm transition-all">
+                                {{ tag }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-
-        <!-- 其他 -->
-        <div v-if="groupedTags.others.length > 0">
-            <div class="text-sm font-medium mb-2 text-dim">🏷️ 其他條件</div>
-            <div class="flex flex-wrap gap-2">
-                <button v-for="tag in groupedTags.others" :key="tag" 
-                        @click="toggleTag(tag)"
-                        :class="selectedTags.includes(tag) ? 'btn-accent text-white' : 'bg-black/10 text-dim border border-slate-500/50'"
-                        class="px-4 py-2 rounded-lg text-sm transition-all">
-                    {{ tag }}
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
 
             <!-- 盤源列表 -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
