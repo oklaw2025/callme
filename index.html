@@ -251,17 +251,27 @@
 
         <!-- 圖片燈箱（全域共用） -->
         <transition name="fade">
-            <div v-if="gallery.isOpen" class="fixed inset-0 z-[100] bg-black/95 flex flex-col items-center justify-center p-4">
-                <button @click="closeGallery" class="absolute top-6 right-6 text-white text-5xl">&times;</button>
-                <div class="relative w-full max-w-5xl flex items-center justify-center">
-                    <button @click="prevImg" class="absolute left-0 bg-black/60 p-4 rounded-full text-white">❮</button>
-                    <img :src="gallery.images[gallery.index]" class="max-h-[85vh] max-w-full object-contain">
-                    <button @click="nextImg" class="absolute right-0 bg-black/60 p-4 rounded-full text-white">❯</button>
-                </div>
-                <div class="mt-6 text-white font-bold">{{ gallery.index + 1 }} / {{ gallery.images.length }}</div>
+        <div v-if="gallery.isOpen" class="fixed inset-0 z-[100] bg-black/95 flex flex-col items-center justify-center p-4">
+            <button @click="closeGallery" class="absolute top-6 right-6 text-white text-5xl z-10">&times;</button>
+            
+            <div class="relative w-full max-w-5xl flex items-center justify-center">
+                <button @click="prevImg" 
+                        class="absolute left-4 bg-black/60 hover:bg-black/80 p-4 rounded-full text-white text-3xl z-10">
+                    ❮
+                </button>
+                <img :src="gallery.images[gallery.index]" 
+                     class="max-h-[85vh] max-w-full object-contain rounded-lg">
+                <button @click="nextImg" 
+                        class="absolute right-4 bg-black/60 hover:bg-black/80 p-4 rounded-full text-white text-3xl z-10">
+                    ❯
+                </button>
             </div>
-        </transition>
-    </div>
+            
+            <div class="mt-6 text-white font-bold text-xl">
+                {{ gallery.index + 1 }} / {{ gallery.images.length }}
+            </div>
+        </div>
+    </transition>
 </div>
 
 <script src="data.js"></script>
