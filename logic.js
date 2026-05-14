@@ -1,4 +1,4 @@
-// logic.js - 核心邏輯管理器（新增自動圖片載入功能）
+// logic.js - 核心邏輯管理器（自動處理多種圖片副檔名）
 const { createApp, ref, computed, watch, onMounted } = Vue;
 
 createApp({
@@ -27,28 +27,33 @@ createApp({
         const singleItemMode = ref(!!singleId);
         const currentItem = ref(null);
 
-        // ==================== 數據 ====================
+        // ==================== 數據處理 ====================
         const items = ref([]);
 
-        // ==================== 自動處理圖片列表 ====================
         const processRawItems = () => {
+            const commonExts = ['jpg', 'jpeg', 'png', 'webp'];   // 自動嘗試的副檔名
+
             return rawItems.map(item => {
                 const processed = { ...item };
 
+                // 自動產生圖片列表（使用 baseFolder）
                 if (item.type === 'images' && item.baseFolder) {
-                    const count = item.numPhotos || 10; // 預設最多嘗試10張，可自行調整
+                    const numPhotos = item.numPhotos || 10;
                     processed.images = [];
-                    
-                    for (let i = 1; i <= count; i++) {
-                        // 支援兩種常見命名方式
-                        const url1 = `https://oklaw2025.github.io/callme/${item.baseFolder}/photo${i}.jpg`;
-                        const url2 = `https://oklaw2025.github.io/callme/${item.baseFolder}/photo ${i}.jpg`; // 含空格版本
-                        
-                        // 優先使用不含空格的命名
-                        processed.images.push(url1);
+
+                    for (let i = 1; i <= numPhotos; i++) {
+                        commonExts.forEach(ext => {
+                            // 兩種命名方式都支援：photo1.jpg 和 photo 1.jpg
+                            processed.images.push(`https://oklaw2025.github.io/callme/${item.baseFolder}/photo${i}.${ext}`);
+                            processed.images.push(`https://oklaw2025.github.io/callme/${item.baseFolder}/photo ${i}.${ext}`);
+                        });
                     }
-                } else if (item.type === 'images' && item.images) {
-                    // 保留原本手動填寫的方式（相容舊資料）
+                    
+                    // 去除重複
+                    processed.images = [...new Set(processed.images)];
+                } 
+                // 保留原本手動填寫 images 的方式（最高優先級）
+                else if (item.type === 'images' && item.images && item.images.length > 0) {
                     processed.images = [...item.images];
                 }
                 
@@ -117,7 +122,7 @@ createApp({
             return Array.from(s).sort();
         });
 
-        // 燈箱
+        // 燈箱功能
         const openGallery = (item) => {
             gallery.value.images = item.images || [];
             gallery.value.index = 0;
@@ -142,7 +147,7 @@ createApp({
             window.location.href = 'index.html';
         };
 
-        // WhatsApp 功能（保持不變）
+        // WhatsApp 功能
         const shareToFriend = (item) => {
             const content = `https://oklaw2025.github.io/callme/index.html?id=${item.id}`;
             const text = encodeURIComponent(
