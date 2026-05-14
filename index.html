@@ -60,7 +60,6 @@
         <main class="container mx-auto p-6 flex-1">
             <div v-if="currentItem" class="max-w-3xl mx-auto">
                 <div class="custom-card rounded-3xl overflow-hidden shadow-2xl">
-                    <!-- === 媒體區域（新增可點擊開 Gallery）=== -->
                     <div class="media-container bg-black relative group">
                         <template v-if="currentItem.type === 'video'">
                             <div v-html="currentItem.embedCode"></div>
@@ -71,9 +70,8 @@
                                 class="w-full cursor-pointer"
                                 @click="openGallery(currentItem)"
                             >
-                            <!-- 照片數量提示 -->
                             <div v-if="currentItem.images && currentItem.images.length > 1" 
-                                 class="absolute bottom-3 right-3 bg-black/70 text-white text-xs px-3 py-1 rounded-md pointer-events-none flex items-center gap-1">
+                                 class="absolute bottom-3 right-3 bg-black/70 text-white text-xs px-3 py-1 rounded-md pointer-events-none">
                                 🖼️ {{ currentItem.images.length }} 張
                             </div>
                         </template>
