@@ -17,41 +17,26 @@
             overflow: hidden; 
             border-radius: 12px 12px 0 0; 
         }
-        .media-container iframe, .media-container img { 
+        .media-container img { 
             position: absolute; 
             top: 0; left: 0; 
             width: 100%; height: 100%; 
-            border: none; 
             object-fit: cover; 
+            cursor: pointer;
         }
         .fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
         .fade-enter-from, .fade-leave-to { opacity: 0; }
-
-        /* 手機端精確搵樓優化 */
-        @media (max-width: 768px) {
-            .filter-header {
-                flex-wrap: nowrap !important;
-                gap: 8px !important;
-                overflow-x: auto;
-                padding-bottom: 4px;
-                scrollbar-width: none;
-            }
-            .filter-header::-webkit-scrollbar {
-                display: none;
-            }
-        }
     </style>
 </head>
 <body>
 
 <div id="app">
-    <!-- 單一盤源模式 -->
+    <!-- 單一模式 -->
     <div v-if="singleItemMode" class="min-h-screen flex flex-col" :class="currentTheme">
         <header class="custom-header backdrop-blur-md sticky top-0 z-50 p-4 shadow-xl">
             <div class="container mx-auto flex justify-between items-center">
                 <div class="font-black text-2xl text-gradient">搵樓！搵我O.K.LAW！</div>
-                <button @click="exitSingleMode" 
-                        class="px-5 py-2 text-sm border border-white/30 rounded-full hover:bg-white/10 transition">
+                <button @click="exitSingleMode" class="px-5 py-2 text-sm border border-white/30 rounded-full hover:bg-white/10 transition">
                     ← 返回列表
                 </button>
             </div>
@@ -60,21 +45,15 @@
         <main class="container mx-auto p-6 flex-1">
             <div v-if="currentItem" class="max-w-3xl mx-auto">
                 <div class="custom-card rounded-3xl overflow-hidden shadow-2xl">
-                    <div class="media-container bg-black relative group">
-                        <template v-if="currentItem.type === 'video'">
-                            <div v-html="currentItem.embedCode"></div>
-                        </template>
-                        <template v-else>
-                            <img 
-                                :src="currentItem.images[0]" 
-                                class="w-full cursor-pointer"
-                                @click="openGallery(currentItem)"
-                            >
-                            <div v-if="currentItem.images && currentItem.images.length > 1" 
-                                 class="absolute bottom-3 right-3 bg-black/70 text-white text-xs px-3 py-1 rounded-md pointer-events-none">
-                                🖼️ {{ currentItem.images.length }} 張
-                            </div>
-                        </template>
+                    <div class="media-container bg-black">
+                        <img 
+                            :src="currentItem.images[0]" 
+                            @click="openGalleryDebug(currentItem)"
+                            class="w-full">
+                        <div v-if="currentItem.images?.length > 1" 
+                             class="absolute bottom-3 right-3 bg-black/70 text-white text-xs px-3 py-1 rounded-md">
+                            🖼️ {{ currentItem.images.length }} 張
+                        </div>
                     </div>
 
                     <div class="p-8">
@@ -82,36 +61,17 @@
                         <div class="flex flex-wrap gap-2 mb-10">
                             <span v-for="t in currentItem.tags" class="text-sm font-bold bg-black/20 text-dim px-4 py-2 rounded-full">#{{ t }}</span>
                         </div>
-
-                        <div class="grid grid-cols-2 gap-4">
-                            <button @click="shareToFriend(currentItem)" 
-                                    class="bg-[#25D366] text-white py-4 rounded-2xl font-bold text-lg flex items-center justify-center gap-2">
-                                🔗 分享給朋友
-                            </button>
-                            <button @click="inquireDetail(currentItem)" 
-                                    class="bg-[#22c55e] text-white py-4 rounded-2xl font-bold text-lg flex items-center justify-center gap-2">
-                                💬 查詢詳情
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>
         </main>
-
-        <footer class="contact-section mt-auto">
-            <div class="container mx-auto px-4 py-10 text-center">
-                <h2 class="text-3xl font-black mb-1">搵樓, 放盤, 一 Call 搞掂</h2>
-                <div class="flex flex-col md:flex-row justify-center gap-4">
-                    <a href="tel:+85295705738" class="contact-btn phone-btn">📞 9570 5738</a>
-                    <a href="https://wa.me/85295705738" class="contact-btn whatsapp-btn">💬 WhatsApp</a>
-                </div>
-                <p class="mt-6 text-m opacity-75">微信號：acj2038</p>
-            </div>
-        </footer>
     </div>
 
-    <!-- 列表模式（保持不變） -->
+    <!-- 列表模式（簡化，保留你原本內容） -->
     <div v-else class="min-h-screen flex flex-col" :class="currentTheme">
+
+
+        
         <header class="custom-header backdrop-blur-md sticky top-0 z-50 p-4 shadow-xl">
             <div class="container mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
                 <div class="font-black text-2xl text-gradient">搵樓！搵我O.K.LAW！</div>
@@ -237,7 +197,8 @@
                 <p>暫時沒有符合標籤的盤源</p>
             </div>
         </main>
-
+    <p class="p-8 text-center">列表模式（測試用）</p>
+</div>
         <footer class="contact-section mt-auto">
             <div class="container mx-auto px-4 py-10 text-center">
                 <h2 class="text-3xl font-black mb-1">搵樓, 放盤, 一 Call 搞掂</h2>
@@ -271,7 +232,7 @@
                 {{ gallery.index + 1 }} / {{ gallery.images.length }}
             </div>
         </div>
-    </transition>
+        </transition>
 </div>
 
 <script src="data.js"></script>
