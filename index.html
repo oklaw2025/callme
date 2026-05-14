@@ -137,7 +137,7 @@
                     <!-- 樓層 -->
                     <div v-if="groupedTags.floor.length > 0">
                         
-                        <div class="flex flex-wrap gap-2">
+                        <div class="flex flex-wrap gap-0">
                             <button v-for="tag in groupedTags.floor" :key="tag" 
                                     @click="toggleTag(tag)"
                                     :class="selectedTags.includes(tag) ? 'btn-accent text-white' : 'bg-black/10 text-dim border border-slate-500/50'"
@@ -150,7 +150,7 @@
                     <!-- 價錢 -->
                     <div v-if="groupedTags.price.length > 0">
                         
-                        <div class="flex flex-wrap gap-2">
+                        <div class="flex flex-wrap gap-0">
                             <button v-for="tag in groupedTags.price" :key="tag" 
                                     @click="toggleTag(tag)"
                                     :class="selectedTags.includes(tag) ? 'btn-accent text-white' : 'bg-black/10 text-dim border border-slate-500/50'"
@@ -163,7 +163,7 @@
                     <!-- 面積 -->
                     <div v-if="groupedTags.area.length > 0">
                         
-                        <div class="flex flex-wrap gap-2">
+                        <div class="flex flex-wrap gap-0">
                             <button v-for="tag in groupedTags.area" :key="tag" 
                                     @click="toggleTag(tag)"
                                     :class="selectedTags.includes(tag) ? 'btn-accent text-white' : 'bg-black/10 text-dim border border-slate-500/50'"
@@ -176,7 +176,7 @@
                     <!-- 其他 -->
                     <div v-if="groupedTags.others.length > 0">
                         
-                        <div class="flex flex-wrap gap-2">
+                        <div class="flex flex-wrap gap-0">
                             <button v-for="tag in groupedTags.others" :key="tag" 
                                     @click="toggleTag(tag)"
                                     :class="selectedTags.includes(tag) ? 'btn-accent text-white' : 'bg-black/10 text-dim border border-slate-500/50'"
