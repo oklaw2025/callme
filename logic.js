@@ -1,4 +1,4 @@
-// logic.js - 核心邏輯管理器（支援任意檔名 + 自動生成）
+// logic.js - 核心邏輯管理器（按你指定的命名規則）
 const { createApp, ref, computed, watch, onMounted } = Vue;
 
 createApp({
@@ -14,6 +14,7 @@ createApp({
             'theme-cyber': '幻彩紫羅蘭'
         };
 
+        // 主題持久化
         watch(currentTheme, (newTheme) => {
             localStorage.setItem('oklaw-theme', newTheme);
             document.documentElement.setAttribute('data-theme', newTheme);
@@ -30,43 +31,23 @@ createApp({
         const items = ref([]);
 
         const processRawItems = () => {
-            const commonExts = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
-
             return rawItems.map(item => {
                 const processed = { ...item };
 
                 if (item.type === 'images' && item.baseFolder) {
+                    const numPhotos = Math.max(1, item.numPhotos || 8);
                     processed.images = [];
 
-                    // 優先使用使用者手動提供的 filenames（最高優先）
-                    if (item.filenames && Array.isArray(item.filenames) && item.filenames.length > 0) {
-                        processed.images = item.filenames.map(name => 
-                            `https://oklaw2025.github.io/callme/${item.baseFolder}/${name}`
-                        );
-                    } 
-                    // 否則使用自動生成方式
-                    else {
-                        const numPhotos = item.numPhotos || 12;
+                    // 嚴格按照你的規則：
+                    // 1. 第一張永遠是 photo1.jpg（封面）
+                    processed.images.push(`https://oklaw2025.github.io/callme/${item.baseFolder}/photo1.jpg`);
 
-                        // 常見命名規則
-                        for (let i = 1; i <= numPhotos; i++) {
-                            // 1. photo1.jpg、photo2.jpg
-                            commonExts.forEach(ext => {
-                                processed.images.push(`https://oklaw2025.github.io/callme/${item.baseFolder}/photo${i}.${ext}`);
-                                processed.images.push(`https://oklaw2025.github.io/callme/${item.baseFolder}/photo ${i}.${ext}`);
-                            });
-                            
-                            // 2. 直接數字命名 1.jpg、2.jpg
-                            commonExts.forEach(ext => {
-                                processed.images.push(`https://oklaw2025.github.io/callme/${item.baseFolder}/${i}.${ext}`);
-                            });
-                        }
-                        
-                        // 去除重複
-                        processed.images = [...new Set(processed.images)];
+                    // 2. 其餘圖片使用 photo2.jpeg ~ photoN.jpeg
+                    for (let i = 2; i <= numPhotos; i++) {
+                        processed.images.push(`https://oklaw2025.github.io/callme/${item.baseFolder}/photo${i}.jpeg`);
                     }
                 } 
-                // 保留原本手動填寫 images 的方式
+                // 保留原本手動填寫 images 的方式（最高優先）
                 else if (item.type === 'images' && item.images && item.images.length > 0) {
                     processed.images = [...item.images];
                 }
@@ -75,9 +56,10 @@ createApp({
             });
         };
 
+        // 處理所有資料
         items.value = processRawItems();
 
-        // 單一模式載入
+        // ==================== 單一模式載入 ====================
         if (singleId) {
             currentItem.value = items.value.find(item => item.id === singleId);
         }
@@ -88,11 +70,16 @@ createApp({
         const pageSize = 6;
         const currentPage = ref(1);
 
-        const gallery = ref({ isOpen: false, images: [], index: 0 });
+        const gallery = ref({ 
+            isOpen: false, 
+            images: [], 
+            index: 0 
+        });
 
         // ==================== 計算屬性 ====================
         const filteredItems = computed(() => {
             if (singleItemMode.value) return [];
+            
             let result = [...items.value];
             if (selectedTags.value.length > 0) {
                 result = result.filter(v => {
@@ -104,7 +91,10 @@ createApp({
             return result.sort((a, b) => b.id - a.id);
         });
 
-        const displayedItems = computed(() => filteredItems.value.slice(0, currentPage.value * pageSize));
+        const displayedItems = computed(() => {
+            return filteredItems.value.slice(0, currentPage.value * pageSize);
+        });
+
         const hasMore = computed(() => displayedItems.value.length < filteredItems.value.length);
         const remainingCount = computed(() => filteredItems.value.length - displayedItems.value.length);
 
@@ -117,7 +107,9 @@ createApp({
             else selectedTags.value.push(tag);
         };
 
-        watch([selectedTags, matchMode], () => { currentPage.value = 1; }, { deep: true });
+        watch([selectedTags, matchMode], () => { 
+            currentPage.value = 1; 
+        }, { deep: true });
 
         const allTags = computed(() => {
             const s = new Set();
@@ -125,6 +117,7 @@ createApp({
             return Array.from(s).sort();
         });
 
+        // 燈箱
         const openGallery = (item) => {
             gallery.value.images = item.images || [];
             gallery.value.index = 0;
@@ -145,27 +138,56 @@ createApp({
             gallery.value.index = (gallery.value.index - 1 + gallery.value.images.length) % gallery.value.images.length;
         };
 
-        const exitSingleMode = () => window.location.href = 'index.html';
+        const exitSingleMode = () => {
+            window.location.href = 'index.html';
+        };
 
         // WhatsApp 功能
         const shareToFriend = (item) => {
             const content = `https://oklaw2025.github.io/callme/index.html?id=${item.id}`;
-            const text = encodeURIComponent(`搵樓！搵我 O.K.LAW！\n\n🔥 推薦單位：${item.title}\n${content}\n\n有興趣可以聯絡：9570 5738`);
+            const text = encodeURIComponent(
+                `搵樓！搵我 O.K.LAW！\n\n` +
+                `🔥 推薦單位：${item.title}\n` +
+                `${content}\n\n` +
+                `有興趣可以聯絡：9570 5738\n` 
+            );
             window.open(`https://wa.me/?text=${text}`, '_blank');
         };
 
         const inquireDetail = (item) => {
             const content = `https://oklaw2025.github.io/callme/index.html?id=${item.id}`;
-            const text = encodeURIComponent(`你好 O.K.LAW，\n\n我想查詢以下單位詳情：\n${item.title}\n${content}\n\n請提供價錢、面積、睇樓時間等資料，謝謝！`);
+            const text = encodeURIComponent(
+                `你好 O.K.LAW，\n\n` +
+                `我想查詢以下單位詳情：\n` +
+                `${item.title}\n` +
+                `${content}\n\n` +
+                `請提供價錢、面積、睇樓時間等資料，謝謝！`
+            );
             window.open(`https://wa.me/85295705738?text=${text}`, '_blank');
         };
 
         return { 
-            currentTheme, themes, selectedTags, allTags, toggleTag, matchMode,
-            displayedItems, filteredItems, hasMore, loadMore, remainingCount,
-            singleItemMode, currentItem, exitSingleMode,
-            shareToFriend, inquireDetail,
-            gallery, openGallery, closeGallery, nextImg, prevImg
+            currentTheme, 
+            themes,
+            selectedTags, 
+            allTags, 
+            toggleTag, 
+            matchMode, 
+            displayedItems, 
+            filteredItems, 
+            hasMore, 
+            loadMore, 
+            remainingCount,
+            singleItemMode,
+            currentItem,
+            exitSingleMode,
+            shareToFriend,
+            inquireDetail,
+            gallery, 
+            openGallery, 
+            closeGallery, 
+            nextImg, 
+            prevImg
         };
     }
 }).mount('#app');
