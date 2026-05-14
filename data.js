@@ -5,17 +5,9 @@ const rawItems = [
                     type: 'images', 
                     title: '迎豐', 
                     tags: ['宋王臺站', '1房高層', '271呎', '520萬', '樓盤編號:002451', '日期:14/5/2026'], 
-                    images: 
-                    [
-                        'https://oklaw2025.github.io/callme/id14/photo1.jpg',
-                        'https://oklaw2025.github.io/callme/id14/photo2.jpg',
-                        'https://oklaw2025.github.io/callme/id14/photo3.jpg',
-                        'https://oklaw2025.github.io/callme/id14/photo4.jpg',
-                        'https://oklaw2025.github.io/callme/id14/photo5.jpg',
-                        'https://oklaw2025.github.io/callme/id14/photo6.jpg',
-                        'https://oklaw2025.github.io/callme/id14/photo7.jpg',
-                    ],
-                    videoUrl: '' // 圖片模式可留空
+                    baseFolder: 'id14',     // ← 關鍵：資料夾名稱
+                    numPhotos: 7,           // ← 圖片數量（實際有多少張就填多少，建議比實際多1-2張也沒關係）
+                    videoUrl: ''
                 },
                {   
                     id: 13, 
