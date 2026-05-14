@@ -5,8 +5,8 @@ const rawItems = [
                     type: 'images', 
                     title: '迎豐', 
                     tags: ['宋王臺站', '1房高層', '271呎', '520萬', '樓盤編號:002451', '日期:14/5/2026'], 
-                    baseFolder: 'id14',     // ← 關鍵：資料夾名稱
-                    numPhotos: 7,           // ← 圖片數量（實際有多少張就填多少，建議比實際多1-2張也沒關係）
+                    baseFolder: 'id14',
+                    numPhotos: 7,      // 總共7張：photo1.jpg + photo2.jpeg ~ photo7.jpeg
                     videoUrl: ''
                 },
                {   
@@ -14,8 +14,8 @@ const rawItems = [
                     type: 'images', 
                     title: '城軒', 
                     tags: ['美善同道', '2房梗廚高層', '510呎', '1100萬', '樓盤編號:002551', '日期:14/5/2026'], 
-                    baseFolder: 'id13',     // ← 關鍵：資料夾名稱
-                    numPhotos: 7,           // ← 圖片數量（實際有多少張就填多少，建議比實際多1-2張也沒關係）
+                    baseFolder: 'id13',
+                    numPhotos: 7,      // 總共7張：photo1.jpg + photo2.jpeg ~ photo7.jpeg
                     videoUrl: ''
                 },
                 {   
