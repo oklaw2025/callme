@@ -1,8 +1,9 @@
-// logic.js - 修復版（解決 undefined length 錯誤）
-const { createApp, ref, computed, watch } = Vue;
+// logic.js - 核心邏輯管理器（按你指定的命名規則）
+const { createApp, ref, computed, watch, onMounted } = Vue;
 
 createApp({
     setup() {
+        // ==================== 主題切換 ====================
         const currentTheme = ref('theme-light');
 
         const themes = {
@@ -13,122 +14,91 @@ createApp({
             'theme-cyber': '幻彩紫羅蘭'
         };
 
+        // 主題持久化
         watch(currentTheme, (newTheme) => {
             localStorage.setItem('oklaw-theme', newTheme);
             document.documentElement.setAttribute('data-theme', newTheme);
         }, { immediate: true });
 
+        // ==================== 單一盤源模式 ====================
         const urlParams = new URLSearchParams(window.location.search);
         const singleId = urlParams.get('id') ? parseInt(urlParams.get('id')) : null;
         
         const singleItemMode = ref(!!singleId);
         const currentItem = ref(null);
 
+        // ==================== 數據處理 ====================
         const items = ref([]);
 
         const processRawItems = () => {
             return rawItems.map(item => {
                 const processed = { ...item };
+
                 if (item.type === 'images' && item.baseFolder) {
                     const numPhotos = Math.max(1, item.numPhotos || 8);
                     processed.images = [];
+
+                    // 嚴格按照你的規則：
+                    // 1. 第一張永遠是 photo1.jpg（封面）
                     processed.images.push(`https://oklaw2025.github.io/callme/${item.baseFolder}/photo1.jpg`);
+
+                    // 2. 其餘圖片使用 photo2.jpeg ~ photoN.jpeg
                     for (let i = 2; i <= numPhotos; i++) {
                         processed.images.push(`https://oklaw2025.github.io/callme/${item.baseFolder}/photo${i}.jpeg`);
                     }
-                } else if (item.type === 'images' && item.images) {
+                } 
+                // 保留原本手動填寫 images 的方式（最高優先）
+                else if (item.type === 'images' && item.images && item.images.length > 0) {
                     processed.images = [...item.images];
                 }
+
                 return processed;
             });
         };
 
+        // 處理所有資料
         items.value = processRawItems();
 
+        // ==================== 單一模式載入 ====================
         if (singleId) {
             currentItem.value = items.value.find(item => item.id === singleId);
         }
 
-        // ==================== 篩選狀態 ====================
+        // ==================== 其他狀態 ====================
         const selectedTags = ref([]);
         const matchMode = ref('OR');
-
-        const areaMin = ref(0);
-        const areaMax = ref(2000);
-        const priceMin = ref(0);
-        const priceMax = ref(5000);
-
         const pageSize = 6;
         const currentPage = ref(1);
 
-        const gallery = ref({ isOpen: false, images: [], index: 0 });
-
-        const isExcludedTag = (tag) => tag.includes('樓盤編號:') || tag.includes('日期:');
-
-        const allTags = computed(() => {
-            const s = new Set();
-            items.value.forEach(v => {
-                if (v.tags) {
-                    v.tags.forEach(t => {
-                        if (!isExcludedTag(t)) s.add(t);
-                    });
-                }
-            });
-            return Array.from(s).sort();
+        const gallery = ref({ 
+            isOpen: false, 
+            images: [], 
+            index: 0 
         });
 
-        const groupedTags = computed(() => {
-            const groups = { floor: [], others: [] };
-            allTags.value.forEach(tag => {
-                if (tag.endsWith('層')) {
-                    groups.floor.push(tag);
-                } else if (!tag.endsWith('萬') && !tag.endsWith('呎')) {
-                    groups.others.push(tag);
-                }
-            });
-            return groups;
-        });
-
-        // ==================== 篩選邏輯 ====================
+        // ==================== 計算屬性 ====================
         const filteredItems = computed(() => {
             if (singleItemMode.value) return [];
-
+            
             let result = [...items.value];
-
             if (selectedTags.value.length > 0) {
                 result = result.filter(v => {
-                    if (!v.tags) return false;
                     return matchMode.value === 'AND' 
                         ? selectedTags.value.every(t => v.tags.includes(t))
                         : selectedTags.value.some(t => v.tags.includes(t));
                 });
             }
-
-            // 面積篩選
-            result = result.filter(item => {
-                if (!item.tags) return true;
-                const areaTag = item.tags.find(t => t.endsWith('呎'));
-                if (!areaTag) return true;
-                const area = parseInt(areaTag) || 0;
-                return area >= areaMin.value && area <= areaMax.value;
-            });
-
-            // 價格篩選
-            result = result.filter(item => {
-                if (!item.tags) return true;
-                const priceTag = item.tags.find(t => t.endsWith('萬'));
-                if (!priceTag) return true;
-                const price = parseInt(priceTag) || 0;
-                return price >= priceMin.value && price <= priceMax.value;
-            });
-
             return result.sort((a, b) => b.id - a.id);
         });
 
-        const displayedItems = computed(() => filteredItems.value.slice(0, currentPage.value * pageSize));
+        const displayedItems = computed(() => {
+            return filteredItems.value.slice(0, currentPage.value * pageSize);
+        });
+
         const hasMore = computed(() => displayedItems.value.length < filteredItems.value.length);
         const remainingCount = computed(() => filteredItems.value.length - displayedItems.value.length);
 
+        // ==================== 方法 ====================
         const loadMore = () => { currentPage.value++; };
 
         const toggleTag = (tag) => {
@@ -137,20 +107,17 @@ createApp({
             else selectedTags.value.push(tag);
         };
 
-        const resetFilters = () => {
-            selectedTags.value = [];
-            areaMin.value = 0;
-            areaMax.value = 2000;
-            priceMin.value = 0;
-            priceMax.value = 5000;
-            currentPage.value = 1;
-        };
-
-        watch([selectedTags, matchMode, areaMin, areaMax, priceMin, priceMax], () => {
-            currentPage.value = 1;
+        watch([selectedTags, matchMode], () => { 
+            currentPage.value = 1; 
         }, { deep: true });
 
-        // 燈箱（加強防護）
+        const allTags = computed(() => {
+            const s = new Set();
+            items.value.forEach(v => v.tags.forEach(t => s.add(t)));
+            return Array.from(s).sort();
+        });
+
+        // 燈箱
         const openGallery = (item) => {
             gallery.value.images = item.images || [];
             gallery.value.index = 0;
@@ -164,37 +131,63 @@ createApp({
         };
 
         const nextImg = () => {
-            const len = gallery.value.images ? gallery.value.images.length : 0;
-            if (len > 0) gallery.value.index = (gallery.value.index + 1) % len;
+            gallery.value.index = (gallery.value.index + 1) % gallery.value.images.length;
         };
 
         const prevImg = () => {
-            const len = gallery.value.images ? gallery.value.images.length : 0;
-            if (len > 0) gallery.value.index = (gallery.value.index - 1 + len) % len;
+            gallery.value.index = (gallery.value.index - 1 + gallery.value.images.length) % gallery.value.images.length;
         };
 
-        const exitSingleMode = () => { window.location.href = 'index.html'; };
+        const exitSingleMode = () => {
+            window.location.href = 'index.html';
+        };
 
+        // WhatsApp 功能
         const shareToFriend = (item) => {
             const content = `https://oklaw2025.github.io/callme/index.html?id=${item.id}`;
-            const text = encodeURIComponent(`搵樓！搵我 O.K.LAW！\n\n🔥 推薦單位：${item.title}\n${content}\n\n聯絡：9570 5738`);
+            const text = encodeURIComponent(
+                `搵樓！搵我 O.K.LAW！\n\n` +
+                `🔥 推薦單位：${item.title}\n` +
+                `${content}\n\n` +
+                `有興趣可以聯絡：9570 5738\n` 
+            );
             window.open(`https://wa.me/?text=${text}`, '_blank');
         };
 
         const inquireDetail = (item) => {
             const content = `https://oklaw2025.github.io/callme/index.html?id=${item.id}`;
-            const text = encodeURIComponent(`你好 O.K.LAW，\n\n我想查詢以下單位詳情：\n${item.title}\n${content}\n\n請提供詳情，謝謝！`);
+            const text = encodeURIComponent(
+                `你好 O.K.LAW，\n\n` +
+                `我想查詢以下單位詳情：\n` +
+                `${item.title}\n` +
+                `${content}\n\n` +
+                `請提供價錢、面積、睇樓時間等資料，謝謝！`
+            );
             window.open(`https://wa.me/85295705738?text=${text}`, '_blank');
         };
 
         return { 
-            currentTheme, themes,
-            selectedTags, groupedTags, toggleTag, matchMode,
-            areaMin, areaMax, priceMin, priceMax, resetFilters,
-            displayedItems, filteredItems, hasMore, loadMore, remainingCount,
-            singleItemMode, currentItem, exitSingleMode,
-            shareToFriend, inquireDetail,
-            gallery, openGallery, closeGallery, nextImg, prevImg
+            currentTheme, 
+            themes,
+            selectedTags, 
+            allTags, 
+            toggleTag, 
+            matchMode, 
+            displayedItems, 
+            filteredItems, 
+            hasMore, 
+            loadMore, 
+            remainingCount,
+            singleItemMode,
+            currentItem,
+            exitSingleMode,
+            shareToFriend,
+            inquireDetail,
+            gallery, 
+            openGallery, 
+            closeGallery, 
+            nextImg, 
+            prevImg
         };
     }
 }).mount('#app');
