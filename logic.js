@@ -1,5 +1,5 @@
-// logic.js - 核心邏輯管理器（已加入標籤分組與排除規則）
-const { createApp, ref, computed, watch, onMounted } = Vue;
+// logic.js - 核心邏輯管理器（含 AND 模式智能標籤過濾）
+const { createApp, ref, computed, watch } = Vue;
 
 createApp({
     setup() {
@@ -37,15 +37,11 @@ createApp({
                 if (item.type === 'images' && item.baseFolder) {
                     const numPhotos = Math.max(1, item.numPhotos || 8);
                     processed.images = [];
-
-                    // 嚴格按照規則：photo1.jpg + photo2.jpeg ~ photoN.jpeg
                     processed.images.push(`https://oklaw2025.github.io/callme/${item.baseFolder}/photo1.jpg`);
-
                     for (let i = 2; i <= numPhotos; i++) {
                         processed.images.push(`https://oklaw2025.github.io/callme/${item.baseFolder}/photo${i}.jpeg`);
                     }
-                } 
-                else if (item.type === 'images' && item.images && item.images.length > 0) {
+                } else if (item.type === 'images' && item.images && item.images.length > 0) {
                     processed.images = [...item.images];
                 }
 
@@ -55,70 +51,89 @@ createApp({
 
         items.value = processRawItems();
 
+        // ==================== 單一模式載入 ====================
         if (singleId) {
             currentItem.value = items.value.find(item => item.id === singleId);
         }
 
-        // ==================== 其他狀態 ====================
+        // ==================== 狀態 ====================
         const selectedTags = ref([]);
         const matchMode = ref('OR');
         const pageSize = 6;
         const currentPage = ref(1);
 
-        const gallery = ref({ isOpen: false, images: [], index: 0 });
-
-        // ==================== 標籤處理與分組 ====================
-        const isExcludedTag = (tag) => {
-            return tag.includes('樓盤編號:') || tag.includes('日期:');
-        };
-
-        const allTags = computed(() => {
-            const s = new Set();
-            items.value.forEach(v => {
-                v.tags.forEach(t => {
-                    if (!isExcludedTag(t)) s.add(t);
-                });
-            });
-            return Array.from(s).sort();
+        const gallery = ref({ 
+            isOpen: false, 
+            images: [], 
+            index: 0 
         });
 
-        // 分組後的標籤（供 UI 使用）
+        // ==================== 計算屬性 ====================
+        const filteredItems = computed(() => {
+            let result = [...items.value];
+            
+            if (selectedTags.value.length > 0) {
+                result = result.filter(item => {
+                    if (matchMode.value === 'AND') {
+                        return selectedTags.value.every(t => item.tags.includes(t));
+                    } else {
+                        return selectedTags.value.some(t => item.tags.includes(t));
+                    }
+                });
+            }
+            return result.sort((a, b) => b.id - a.id);
+        });
+
+        // === AND 模式智能標籤過濾：只顯示加入後仍有結果的標籤 ===
+        const availableTags = computed(() => {
+            if (matchMode.value === 'OR' || selectedTags.value.length === 0) {
+                const all = new Set();
+                items.value.forEach(item => item.tags.forEach(t => all.add(t)));
+                return Array.from(all);
+            }
+
+            // AND 模式：只保留加入後仍然有匹配結果的標籤
+            const possible = new Set();
+            items.value.forEach(item => {
+                const currentlyMatched = selectedTags.value.every(t => item.tags.includes(t));
+                if (currentlyMatched) {
+                    item.tags.forEach(t => {
+                        if (!selectedTags.value.includes(t)) {
+                            possible.add(t);
+                        }
+                    });
+                }
+            });
+            return Array.from(possible);
+        });
+
+        // 分組標籤（使用 availableTags）
         const groupedTags = computed(() => {
             const groups = {
-                floor: [],    // 樓層 (結尾為「層」)
-                price: [],    // 價錢 (結尾為「萬」)
-                area: [],     // 面積 (結尾為「呎」)
-                others: []    // 其他
+                floor: [],
+                price: [],
+                area: [],
+                others: []
             };
 
-            allTags.value.forEach(tag => {
-                if (tag.endsWith('層')) {
+            availableTags.value.forEach(tag => {
+                if (['層', '低層', '高層', '中層'].some(k => tag.includes(k))) {
                     groups.floor.push(tag);
-                } else if (tag.endsWith('萬')) {
+                } else if (tag.includes('萬')) {
                     groups.price.push(tag);
-                } else if (tag.endsWith('呎')) {
+                } else if (tag.includes('呎')) {
                     groups.area.push(tag);
                 } else {
                     groups.others.push(tag);
                 }
             });
 
-            return groups;
-        });
+            // 各組內排序
+            Object.keys(groups).forEach(key => {
+                groups[key].sort();
+            });
 
-        // ==================== 計算屬性 ====================
-        const filteredItems = computed(() => {
-            if (singleItemMode.value) return [];
-            
-            let result = [...items.value];
-            if (selectedTags.value.length > 0) {
-                result = result.filter(v => {
-                    return matchMode.value === 'AND' 
-                        ? selectedTags.value.every(t => v.tags.includes(t))
-                        : selectedTags.value.some(t => v.tags.includes(t));
-                });
-            }
-            return result.sort((a, b) => b.id - a.id);
+            return groups;
         });
 
         const displayedItems = computed(() => {
@@ -129,19 +144,25 @@ createApp({
         const remainingCount = computed(() => filteredItems.value.length - displayedItems.value.length);
 
         // ==================== 方法 ====================
-        const loadMore = () => { currentPage.value++; };
-
         const toggleTag = (tag) => {
             const i = selectedTags.value.indexOf(tag);
-            if (i > -1) selectedTags.value.splice(i, 1);
-            else selectedTags.value.push(tag);
+            if (i > -1) {
+                selectedTags.value.splice(i, 1);
+            } else {
+                selectedTags.value.push(tag);
+            }
+            currentPage.value = 1;
+        };
+
+        const loadMore = () => { 
+            currentPage.value++; 
         };
 
         watch([selectedTags, matchMode], () => { 
             currentPage.value = 1; 
         }, { deep: true });
 
-        // 燈箱
+        // 燈箱功能
         const openGallery = (item) => {
             gallery.value.images = item.images || [];
             gallery.value.index = 0;
@@ -194,15 +215,14 @@ createApp({
             currentTheme, 
             themes,
             selectedTags, 
-            allTags,
-            groupedTags,          // ← 新增：分組後的標籤
-            toggleTag, 
             matchMode, 
             displayedItems, 
             filteredItems, 
             hasMore, 
             loadMore, 
             remainingCount,
+            groupedTags,
+            toggleTag,
             singleItemMode,
             currentItem,
             exitSingleMode,
