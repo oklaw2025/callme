@@ -66,6 +66,13 @@ createApp({
 
         const exitSingleMode = () => window.location.href = 'index.html';
 
+        const openGalleryDebug = (item) => {
+                console.log('=== openGallery 被呼叫 ===');
+                console.log('Item:', item);
+                console.log('Images:', item.images);
+                utils.openGallery(gallery, item);
+            };
+
         return { 
             currentTheme, themes,
             selectedTags, matchMode,
@@ -74,6 +81,7 @@ createApp({
             singleItemMode, currentItem, exitSingleMode,
             gallery,
             openGallery: (item) => utils.openGallery(gallery, item),
+            openGalleryDebug,   // ← 測試用
             closeGallery: () => utils.closeGallery(gallery),
             nextImg: () => utils.nextImg(gallery),
             prevImg: () => utils.prevImg(gallery),
