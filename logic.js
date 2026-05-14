@@ -1,4 +1,4 @@
-// logic.js - 修復版（已修正 groupedTags 與範圍篩選）
+// logic.js - 修復版（解決 undefined length 錯誤）
 const { createApp, ref, computed, watch } = Vue;
 
 createApp({
@@ -67,17 +67,24 @@ createApp({
 
         const allTags = computed(() => {
             const s = new Set();
-            items.value.forEach(v => v.tags.forEach(t => {
-                if (!isExcludedTag(t)) s.add(t);
-            }));
+            items.value.forEach(v => {
+                if (v.tags) {
+                    v.tags.forEach(t => {
+                        if (!isExcludedTag(t)) s.add(t);
+                    });
+                }
+            });
             return Array.from(s).sort();
         });
 
         const groupedTags = computed(() => {
             const groups = { floor: [], others: [] };
             allTags.value.forEach(tag => {
-                if (tag.endsWith('層')) groups.floor.push(tag);
-                else if (!tag.endsWith('萬') && !tag.endsWith('呎')) groups.others.push(tag);
+                if (tag.endsWith('層')) {
+                    groups.floor.push(tag);
+                } else if (!tag.endsWith('萬') && !tag.endsWith('呎')) {
+                    groups.others.push(tag);
+                }
             });
             return groups;
         });
@@ -88,9 +95,9 @@ createApp({
 
             let result = [...items.value];
 
-            // 標籤篩選
             if (selectedTags.value.length > 0) {
                 result = result.filter(v => {
+                    if (!v.tags) return false;
                     return matchMode.value === 'AND' 
                         ? selectedTags.value.every(t => v.tags.includes(t))
                         : selectedTags.value.some(t => v.tags.includes(t));
@@ -99,6 +106,7 @@ createApp({
 
             // 面積篩選
             result = result.filter(item => {
+                if (!item.tags) return true;
                 const areaTag = item.tags.find(t => t.endsWith('呎'));
                 if (!areaTag) return true;
                 const area = parseInt(areaTag) || 0;
@@ -107,6 +115,7 @@ createApp({
 
             // 價格篩選
             result = result.filter(item => {
+                if (!item.tags) return true;
                 const priceTag = item.tags.find(t => t.endsWith('萬'));
                 if (!priceTag) return true;
                 const price = parseInt(priceTag) || 0;
@@ -141,7 +150,7 @@ createApp({
             currentPage.value = 1;
         }, { deep: true });
 
-        // 燈箱
+        // 燈箱（加強防護）
         const openGallery = (item) => {
             gallery.value.images = item.images || [];
             gallery.value.index = 0;
@@ -155,32 +164,33 @@ createApp({
         };
 
         const nextImg = () => {
-            gallery.value.index = (gallery.value.index + 1) % (gallery.value.images?.length || 1);
+            const len = gallery.value.images ? gallery.value.images.length : 0;
+            if (len > 0) gallery.value.index = (gallery.value.index + 1) % len;
         };
 
         const prevImg = () => {
-            gallery.value.index = (gallery.value.index - 1 + (gallery.value.images?.length || 1)) % (gallery.value.images?.length || 1);
+            const len = gallery.value.images ? gallery.value.images.length : 0;
+            if (len > 0) gallery.value.index = (gallery.value.index - 1 + len) % len;
         };
 
-        const exitSingleMode = () => window.location.href = 'index.html';
+        const exitSingleMode = () => { window.location.href = 'index.html'; };
 
         const shareToFriend = (item) => {
             const content = `https://oklaw2025.github.io/callme/index.html?id=${item.id}`;
-            const text = encodeURIComponent(`搵樓！搵我 O.K.LAW！\n\n🔥 推薦單位：${item.title}\n${content}\n\n有興趣可以聯絡：9570 5738`);
+            const text = encodeURIComponent(`搵樓！搵我 O.K.LAW！\n\n🔥 推薦單位：${item.title}\n${content}\n\n聯絡：9570 5738`);
             window.open(`https://wa.me/?text=${text}`, '_blank');
         };
 
         const inquireDetail = (item) => {
             const content = `https://oklaw2025.github.io/callme/index.html?id=${item.id}`;
-            const text = encodeURIComponent(`你好 O.K.LAW，\n\n我想查詢以下單位詳情：\n${item.title}\n${content}\n\n請提供價錢、面積、睇樓時間等資料，謝謝！`);
+            const text = encodeURIComponent(`你好 O.K.LAW，\n\n我想查詢以下單位詳情：\n${item.title}\n${content}\n\n請提供詳情，謝謝！`);
             window.open(`https://wa.me/85295705738?text=${text}`, '_blank');
         };
 
         return { 
             currentTheme, themes,
             selectedTags, groupedTags, toggleTag, matchMode,
-            areaMin, areaMax, priceMin, priceMax,
-            resetFilters,
+            areaMin, areaMax, priceMin, priceMax, resetFilters,
             displayedItems, filteredItems, hasMore, loadMore, remainingCount,
             singleItemMode, currentItem, exitSingleMode,
             shareToFriend, inquireDetail,
