@@ -1,5 +1,12 @@
 // filters.js - 篩選相關邏輯
 window.createFilters = function(items, selectedTags, matchMode) {
+    // 排除不應成為篩選條件的標籤
+    const excludedPrefixes = ['樓盤編號:', '日期:'];
+
+    const isExcludedTag = (tag) => {
+        return excludedPrefixes.some(prefix => tag.startsWith(prefix));
+    };
+
     const filteredItems = Vue.computed(() => {
         let result = [...items.value];
         
@@ -18,7 +25,13 @@ window.createFilters = function(items, selectedTags, matchMode) {
     const availableTags = Vue.computed(() => {
         if (matchMode.value === 'OR' || selectedTags.value.length === 0) {
             const all = new Set();
-            items.value.forEach(item => item.tags.forEach(t => all.add(t)));
+            items.value.forEach(item => {
+                item.tags.forEach(t => {
+                    if (!isExcludedTag(t)) {
+                        all.add(t);
+                    }
+                });
+            });
             return Array.from(all);
         }
 
@@ -27,7 +40,9 @@ window.createFilters = function(items, selectedTags, matchMode) {
             const currentlyMatched = selectedTags.value.every(t => item.tags.includes(t));
             if (currentlyMatched) {
                 item.tags.forEach(t => {
-                    if (!selectedTags.value.includes(t)) possible.add(t);
+                    if (!selectedTags.value.includes(t) && !isExcludedTag(t)) {
+                        possible.add(t);
+                    }
                 });
             }
         });
