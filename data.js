@@ -19,11 +19,20 @@ const rawItems = [
                 },
                {   
                     id: 13, 
-                    type: 'video', 
-                    title: '10沙田複式戶', 
-                    tags: ['豪宅', '特色戶'], 
-                    videoUrl: 'https://youtu.be/cFKQCfP5sZA', 
-                    embedCode: '<iframe src="https://www.youtube.com/embed/cFKQCfP5sZA"></iframe>' 
+                    type: 'images', 
+                    title: '城軒', 
+                    tags: ['美善同道', '2房梗廚高層', '510呎', '1100萬', '樓盤編號:002551', '日期:14/5/2026'], 
+                    images: 
+                    [
+                        'https://oklaw2025.github.io/callme/id13/photo1.jpg',
+                        'https://oklaw2025.github.io/callme/id13/photo2.jpg',
+                        'https://oklaw2025.github.io/callme/id13/photo3.jpg',
+                        'https://oklaw2025.github.io/callme/id13/photo4.jpg',
+                        'https://oklaw2025.github.io/callme/id13/photo5.jpg',
+                        'https://oklaw2025.github.io/callme/id13/photo6.jpg',
+                        'https://oklaw2025.github.io/callme/id13/photo7.jpg',
+                    ],
+                    videoUrl: '' // 圖片模式可留空
                 },
                 {   
                     id: 1, 
