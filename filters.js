@@ -23,30 +23,40 @@ window.createFilters = function(items, selectedTags, matchMode) {
     });
 
     const availableTags = Vue.computed(() => {
+        const allPossible = new Set();
+
+        // 1. 始終保留已選的標籤（重要修改）
+        selectedTags.value.forEach(tag => {
+            if (!isExcludedTag(tag)) {
+                allPossible.add(tag);
+            }
+        });
+
+        // 2. 加入可繼續添加的標籤
         if (matchMode.value === 'OR' || selectedTags.value.length === 0) {
-            const all = new Set();
+            // OR 模式或沒有選擇時，顯示所有可用標籤
             items.value.forEach(item => {
                 item.tags.forEach(t => {
                     if (!isExcludedTag(t)) {
-                        all.add(t);
+                        allPossible.add(t);
                     }
                 });
             });
-            return Array.from(all);
+        } else {
+            // AND 模式：顯示目前已匹配的項目中還沒選的標籤
+            items.value.forEach(item => {
+                const currentlyMatched = selectedTags.value.every(t => item.tags.includes(t));
+                if (currentlyMatched) {
+                    item.tags.forEach(t => {
+                        if (!isExcludedTag(t)) {
+                            allPossible.add(t);
+                        }
+                    });
+                }
+            });
         }
 
-        const possible = new Set();
-        items.value.forEach(item => {
-            const currentlyMatched = selectedTags.value.every(t => item.tags.includes(t));
-            if (currentlyMatched) {
-                item.tags.forEach(t => {
-                    if (!selectedTags.value.includes(t) && !isExcludedTag(t)) {
-                        possible.add(t);
-                    }
-                });
-            }
-        });
-        return Array.from(possible);
+        return Array.from(allPossible);
     });
 
     const groupedTags = Vue.computed(() => {
