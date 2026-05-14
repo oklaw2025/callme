@@ -25,12 +25,12 @@ const rawItems = [
                     images: 
                     [
                         'https://oklaw2025.github.io/callme/id13/photo1.jpg',
-                        'https://oklaw2025.github.io/callme/id13/photo2.jpg',
-                        'https://oklaw2025.github.io/callme/id13/photo3.jpg',
-                        'https://oklaw2025.github.io/callme/id13/photo4.jpg',
-                        'https://oklaw2025.github.io/callme/id13/photo5.jpg',
-                        'https://oklaw2025.github.io/callme/id13/photo6.jpg',
-                        'https://oklaw2025.github.io/callme/id13/photo7.jpg',
+                        'https://oklaw2025.github.io/callme/id13/photo2.jepg',
+                        'https://oklaw2025.github.io/callme/id13/photo3.jepg',
+                        'https://oklaw2025.github.io/callme/id13/photo4.jepg',
+                        'https://oklaw2025.github.io/callme/id13/photo5.jepg',
+                        'https://oklaw2025.github.io/callme/id13/photo6.jepg',
+                        'https://oklaw2025.github.io/callme/id13/photo7.jepg',
                     ],
                     videoUrl: '' // 圖片模式可留空
                 },
