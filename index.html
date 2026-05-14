@@ -60,12 +60,22 @@
         <main class="container mx-auto p-6 flex-1">
             <div v-if="currentItem" class="max-w-3xl mx-auto">
                 <div class="custom-card rounded-3xl overflow-hidden shadow-2xl">
-                    <div class="media-container bg-black">
+                    <!-- === 媒體區域（新增可點擊開 Gallery）=== -->
+                    <div class="media-container bg-black relative group">
                         <template v-if="currentItem.type === 'video'">
                             <div v-html="currentItem.embedCode"></div>
                         </template>
                         <template v-else>
-                            <img :src="currentItem.images[0]" class="w-full">
+                            <img 
+                                :src="currentItem.images[0]" 
+                                class="w-full cursor-pointer"
+                                @click="openGallery(currentItem)"
+                            >
+                            <!-- 照片數量提示 -->
+                            <div v-if="currentItem.images && currentItem.images.length > 1" 
+                                 class="absolute bottom-3 right-3 bg-black/70 text-white text-xs px-3 py-1 rounded-md pointer-events-none flex items-center gap-1">
+                                🖼️ {{ currentItem.images.length }} 張
+                            </div>
                         </template>
                     </div>
 
@@ -102,7 +112,7 @@
         </footer>
     </div>
 
-    <!-- 列表模式 -->
+    <!-- 列表模式（保持不變） -->
     <div v-else class="min-h-screen flex flex-col" :class="currentTheme">
         <header class="custom-header backdrop-blur-md sticky top-0 z-50 p-4 shadow-xl">
             <div class="container mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
@@ -116,7 +126,6 @@
                 <div class="filter-header flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                     <h2 class="font-bold text-xl flex items-center">🎯 精確搵樓</h2>
                     
-                    <!-- 清空條件按鈕：只有選取條件時才顯示 -->
                     <button 
                         v-if="selectedTags.length > 0"
                         @click="selectedTags = []" 
@@ -136,7 +145,6 @@
 
                 <!-- 分組標籤 -->
                 <div class="space-y-1">
-                    <!-- 樓層 -->
                     <div v-if="groupedTags.floor.length > 0">
                         <div class="flex flex-wrap gap-0">
                             <button v-for="tag in groupedTags.floor" :key="tag" 
@@ -148,7 +156,6 @@
                         </div>
                     </div>
 
-                    <!-- 價錢 -->
                     <div v-if="groupedTags.price.length > 0">
                         <div class="flex flex-wrap gap-0">
                             <button v-for="tag in groupedTags.price" :key="tag" 
@@ -160,7 +167,6 @@
                         </div>
                     </div>
 
-                    <!-- 面積 -->
                     <div v-if="groupedTags.area.length > 0">
                         <div class="flex flex-wrap gap-0">
                             <button v-for="tag in groupedTags.area" :key="tag" 
@@ -172,7 +178,6 @@
                         </div>
                     </div>
 
-                    <!-- 其他 -->
                     <div v-if="groupedTags.others.length > 0">
                         <div class="flex flex-wrap gap-0">
                             <button v-for="tag in groupedTags.others" :key="tag" 
@@ -246,7 +251,7 @@
             </div>
         </footer>
 
-        <!-- 圖片燈箱 -->
+        <!-- 圖片燈箱（全域共用） -->
         <transition name="fade">
             <div v-if="gallery.isOpen" class="fixed inset-0 z-[100] bg-black/95 flex flex-col items-center justify-center p-4">
                 <button @click="closeGallery" class="absolute top-6 right-6 text-white text-5xl">&times;</button>
