@@ -26,6 +26,13 @@
         }
         .fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
         .fade-enter-from, .fade-leave-to { opacity: 0; }
+        
+        .tag-group-title {
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 8px;
+            padding-left: 4px;
+        }
     </style>
 </head>
 <body>
@@ -33,6 +40,7 @@
 <div id="app">
     <!-- 單一盤源模式 -->
     <div v-if="singleItemMode" class="min-h-screen flex flex-col" :class="currentTheme">
+        <!-- 單一顯示 Header -->
         <header class="custom-header backdrop-blur-md sticky top-0 z-50 p-4 shadow-xl">
             <div class="container mx-auto flex justify-between items-center">
                 <div class="font-black text-2xl text-gradient">搵樓！搵我O.K.LAW！</div>
@@ -43,6 +51,7 @@
             </div>
         </header>
 
+        <!-- 單一盤源內容 -->
         <main class="container mx-auto p-6 flex-1">
             <div v-if="currentItem" class="max-w-3xl mx-auto">
                 <div class="custom-card rounded-3xl overflow-hidden shadow-2xl">
@@ -57,6 +66,7 @@
 
                     <div class="p-8">
                         <h1 class="text-3xl font-bold mb-6">{{ currentItem.title }}</h1>
+                        
                         <div class="flex flex-wrap gap-2 mb-10">
                             <span v-for="t in currentItem.tags" class="text-sm font-bold bg-black/20 text-dim px-4 py-2 rounded-full">#{{ t }}</span>
                         </div>
@@ -95,8 +105,7 @@
             <div class="container mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
                 <div class="font-black text-2xl text-gradient">搵樓！搵我O.K.LAW！</div>
                 
-                <!-- 主題切換按鈕暫時隱藏 -->
-                <div class="flex flex-wrap justify-center gap-2" hidden>
+                <div class="flex flex-wrap justify-center gap-2">
                     <button v-for="(name, key) in themes" 
                             :key="key"
                             @click="currentTheme = key"
@@ -109,7 +118,7 @@
         </header>
 
         <main class="container mx-auto p-4 flex-1">
-            <!-- 篩選器 -->
+            <!-- 篩選器 - 更新後的分組顯示 -->
             <div class="custom-card rounded-2xl p-6 mb-8 shadow-2xl">
                 <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
                     <h2 class="font-bold text-xl flex items-center">🎯 精確搵樓</h2>
@@ -123,42 +132,62 @@
                     </div>
                 </div>
 
-                <!-- 分組標籤（無標題 + 顯示更多功能） -->
+                <!-- 分組標籤 -->
                 <div class="space-y-8">
                     <!-- 樓層 -->
-                    <TagGroup 
-                        v-if="groupedTags.floor.length > 0"
-                        :tags="groupedTags.floor" 
-                        title="樓層"
-                        @toggle="toggleTag" 
-                        :selected="selectedTags" />
+                    <div v-if="groupedTags.floor.length > 0">
+                        <div class="tag-group-title">🏢 樓層</div>
+                        <div class="flex flex-wrap gap-2">
+                            <button v-for="tag in groupedTags.floor" :key="tag" 
+                                    @click="toggleTag(tag)"
+                                    :class="selectedTags.includes(tag) ? 'btn-accent text-white' : 'bg-black/10 text-dim border border-slate-500/50'"
+                                    class="px-4 py-2 rounded-lg text-sm transition-all">
+                                {{ tag }}
+                            </button>
+                        </div>
+                    </div>
 
                     <!-- 價錢 -->
-                    <TagGroup 
-                        v-if="groupedTags.price.length > 0"
-                        :tags="groupedTags.price" 
-                        title="價錢"
-                        @toggle="toggleTag" 
-                        :selected="selectedTags" />
+                    <div v-if="groupedTags.price.length > 0">
+                        <div class="tag-group-title">💰 價錢</div>
+                        <div class="flex flex-wrap gap-2">
+                            <button v-for="tag in groupedTags.price" :key="tag" 
+                                    @click="toggleTag(tag)"
+                                    :class="selectedTags.includes(tag) ? 'btn-accent text-white' : 'bg-black/10 text-dim border border-slate-500/50'"
+                                    class="px-4 py-2 rounded-lg text-sm transition-all">
+                                {{ tag }}
+                            </button>
+                        </div>
+                    </div>
 
                     <!-- 面積 -->
-                    <TagGroup 
-                        v-if="groupedTags.area.length > 0"
-                        :tags="groupedTags.area" 
-                        title="面積"
-                        @toggle="toggleTag" 
-                        :selected="selectedTags" />
+                    <div v-if="groupedTags.area.length > 0">
+                        <div class="tag-group-title">📐 面積</div>
+                        <div class="flex flex-wrap gap-2">
+                            <button v-for="tag in groupedTags.area" :key="tag" 
+                                    @click="toggleTag(tag)"
+                                    :class="selectedTags.includes(tag) ? 'btn-accent text-white' : 'bg-black/10 text-dim border border-slate-500/50'"
+                                    class="px-4 py-2 rounded-lg text-sm transition-all">
+                                {{ tag }}
+                            </button>
+                        </div>
+                    </div>
 
                     <!-- 其他 -->
-                    <TagGroup 
-                        v-if="groupedTags.others.length > 0"
-                        :tags="groupedTags.others" 
-                        title="其他"
-                        @toggle="toggleTag" 
-                        :selected="selectedTags" />
+                    <div v-if="groupedTags.others.length > 0">
+                        <div class="tag-group-title">📌 其他分類</div>
+                        <div class="flex flex-wrap gap-2">
+                            <button v-for="tag in groupedTags.others" :key="tag" 
+                                    @click="toggleTag(tag)"
+                                    :class="selectedTags.includes(tag) ? 'btn-accent text-white' : 'bg-black/10 text-dim border border-slate-500/50'"
+                                    class="px-4 py-2 rounded-lg text-sm transition-all">
+                                {{ tag }}
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="mt-6">
+                <div class="mt-6 flex gap-3">
                     <button @click="selectedTags = []" 
                             class="px-5 py-2 rounded-lg text-sm border border-slate-500 text-dim hover:bg-slate-700">
                         清空全部
@@ -166,7 +195,7 @@
                 </div>
             </div>
 
-            <!-- 盤源列表（保持不變） -->
+            <!-- 盤源列表 -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <div v-for="item in displayedItems" :key="item.id" 
                      class="custom-card rounded-2xl overflow-hidden hover:scale-[1.02] transition-all shadow-lg group">
@@ -190,8 +219,14 @@
                             <span v-for="t in item.tags" class="text-[10px] font-bold bg-black/20 text-dim px-2 py-1 rounded">#{{ t }}</span>
                         </div>
                         <div class="grid grid-cols-2 gap-3 pt-2">
-                            <button @click="shareToFriend(item)" class="bg-[#25D366] text-white py-3 rounded-2xl text-sm font-bold hover:brightness-110 transition flex items-center justify-center gap-1.5">🔗 分享給朋友</button>
-                            <button @click="inquireDetail(item)" class="bg-[#22c55e] text-white py-3 rounded-2xl text-sm font-bold hover:brightness-110 transition flex items-center justify-center gap-1.5">💬 查詢詳情</button>
+                            <button @click="shareToFriend(item)" 
+                                    class="bg-[#25D366] text-white py-3 rounded-2xl text-sm font-bold hover:brightness-110 transition flex items-center justify-center gap-1.5">
+                                🔗 分享給朋友
+                            </button>
+                            <button @click="inquireDetail(item)" 
+                                    class="bg-[#22c55e] text-white py-3 rounded-2xl text-sm font-bold hover:brightness-110 transition flex items-center justify-center gap-1.5">
+                                💬 查詢詳情
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -209,6 +244,7 @@
             </div>
         </main>
 
+        <!-- 底部聯絡區 -->
         <footer class="contact-section mt-auto">
             <div class="container mx-auto px-4 py-10 text-center">
                 <h2 class="text-3xl font-black mb-1">搵樓, 放盤, 一 Call 搞掂</h2>
