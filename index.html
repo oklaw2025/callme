@@ -136,7 +136,7 @@
                 <div class="space-y-8">
                     <!-- 樓層 -->
                     <div v-if="groupedTags.floor.length > 0">
-                        <div class="tag-group-title">🏢 樓層</div>
+                        
                         <div class="flex flex-wrap gap-2">
                             <button v-for="tag in groupedTags.floor" :key="tag" 
                                     @click="toggleTag(tag)"
@@ -149,7 +149,7 @@
 
                     <!-- 價錢 -->
                     <div v-if="groupedTags.price.length > 0">
-                        <div class="tag-group-title">💰 價錢</div>
+                        
                         <div class="flex flex-wrap gap-2">
                             <button v-for="tag in groupedTags.price" :key="tag" 
                                     @click="toggleTag(tag)"
@@ -162,7 +162,7 @@
 
                     <!-- 面積 -->
                     <div v-if="groupedTags.area.length > 0">
-                        <div class="tag-group-title">📐 面積</div>
+                        
                         <div class="flex flex-wrap gap-2">
                             <button v-for="tag in groupedTags.area" :key="tag" 
                                     @click="toggleTag(tag)"
@@ -175,7 +175,7 @@
 
                     <!-- 其他 -->
                     <div v-if="groupedTags.others.length > 0">
-                        <div class="tag-group-title">📌 其他分類</div>
+                        
                         <div class="flex flex-wrap gap-2">
                             <button v-for="tag in groupedTags.others" :key="tag" 
                                     @click="toggleTag(tag)"
