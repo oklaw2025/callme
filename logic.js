@@ -1,4 +1,4 @@
-// logic.js - 核心邏輯管理器（按你指定的命名規則）
+// logic.js - 核心邏輯管理器（已加入標籤分組與排除規則）
 const { createApp, ref, computed, watch, onMounted } = Vue;
 
 createApp({
@@ -38,16 +38,13 @@ createApp({
                     const numPhotos = Math.max(1, item.numPhotos || 8);
                     processed.images = [];
 
-                    // 嚴格按照你的規則：
-                    // 1. 第一張永遠是 photo1.jpg（封面）
+                    // 嚴格按照規則：photo1.jpg + photo2.jpeg ~ photoN.jpeg
                     processed.images.push(`https://oklaw2025.github.io/callme/${item.baseFolder}/photo1.jpg`);
 
-                    // 2. 其餘圖片使用 photo2.jpeg ~ photoN.jpeg
                     for (let i = 2; i <= numPhotos; i++) {
                         processed.images.push(`https://oklaw2025.github.io/callme/${item.baseFolder}/photo${i}.jpeg`);
                     }
                 } 
-                // 保留原本手動填寫 images 的方式（最高優先）
                 else if (item.type === 'images' && item.images && item.images.length > 0) {
                     processed.images = [...item.images];
                 }
@@ -56,10 +53,8 @@ createApp({
             });
         };
 
-        // 處理所有資料
         items.value = processRawItems();
 
-        // ==================== 單一模式載入 ====================
         if (singleId) {
             currentItem.value = items.value.find(item => item.id === singleId);
         }
@@ -70,10 +65,45 @@ createApp({
         const pageSize = 6;
         const currentPage = ref(1);
 
-        const gallery = ref({ 
-            isOpen: false, 
-            images: [], 
-            index: 0 
+        const gallery = ref({ isOpen: false, images: [], index: 0 });
+
+        // ==================== 標籤處理與分組 ====================
+        const isExcludedTag = (tag) => {
+            return tag.includes('樓盤編號:') || tag.includes('日期:');
+        };
+
+        const allTags = computed(() => {
+            const s = new Set();
+            items.value.forEach(v => {
+                v.tags.forEach(t => {
+                    if (!isExcludedTag(t)) s.add(t);
+                });
+            });
+            return Array.from(s).sort();
+        });
+
+        // 分組後的標籤（供 UI 使用）
+        const groupedTags = computed(() => {
+            const groups = {
+                floor: [],    // 樓層 (結尾為「層」)
+                price: [],    // 價錢 (結尾為「萬」)
+                area: [],     // 面積 (結尾為「呎」)
+                others: []    // 其他
+            };
+
+            allTags.value.forEach(tag => {
+                if (tag.endsWith('層')) {
+                    groups.floor.push(tag);
+                } else if (tag.endsWith('萬')) {
+                    groups.price.push(tag);
+                } else if (tag.endsWith('呎')) {
+                    groups.area.push(tag);
+                } else {
+                    groups.others.push(tag);
+                }
+            });
+
+            return groups;
         });
 
         // ==================== 計算屬性 ====================
@@ -110,12 +140,6 @@ createApp({
         watch([selectedTags, matchMode], () => { 
             currentPage.value = 1; 
         }, { deep: true });
-
-        const allTags = computed(() => {
-            const s = new Set();
-            items.value.forEach(v => v.tags.forEach(t => s.add(t)));
-            return Array.from(s).sort();
-        });
 
         // 燈箱
         const openGallery = (item) => {
@@ -170,7 +194,8 @@ createApp({
             currentTheme, 
             themes,
             selectedTags, 
-            allTags, 
+            allTags,
+            groupedTags,          // ← 新增：分組後的標籤
             toggleTag, 
             matchMode, 
             displayedItems, 
