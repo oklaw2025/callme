@@ -105,8 +105,8 @@
             <div class="container mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
                 <div class="font-black text-2xl text-gradient">搵樓！搵我O.K.LAW！</div>
                 
-                <div class="flex flex-wrap justify-center gap-2" hidden>
-                    <button v-for="(name, key) in themes" 
+                <div class="flex flex-wrap justify-center gap-2" >
+                    <button hidden v-for="(name, key) in themes" 
                             :key="key"
                             @click="currentTheme = key"
                             :class="currentTheme === key ? 'active' : ''"
@@ -133,7 +133,7 @@
                 </div>
 
                 <!-- 分組標籤 -->
-                <div class="space-y-8">
+                <div class="space-y-1">
                     <!-- 樓層 -->
                     <div v-if="groupedTags.floor.length > 0">
                         
