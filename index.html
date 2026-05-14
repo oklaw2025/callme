@@ -122,6 +122,12 @@
             <div class="custom-card rounded-2xl p-6 mb-8 shadow-2xl">
                 <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
                     <h2 class="font-bold text-xl flex items-center">🎯 精確搵樓</h2>
+                    <div class="mt-6 flex gap-3">
+                        <button @click="selectedTags = []" 
+                                class="px-5 py-2 rounded-lg text-sm border border-slate-500 text-dim hover:bg-slate-700">
+                            清空全部條件
+                        </button>
+                    </div>
                     <div class="flex items-center bg-black/20 p-1 rounded-xl">
                         <button @click="matchMode = 'OR'" 
                                 :class="matchMode === 'OR' ? 'btn-accent text-white' : 'text-dim'" 
@@ -187,12 +193,7 @@
                     </div>
                 </div>
 
-                <div class="mt-6 flex gap-3">
-                    <button @click="selectedTags = []" 
-                            class="px-5 py-2 rounded-lg text-sm border border-slate-500 text-dim hover:bg-slate-700">
-                        清空全部
-                    </button>
-                </div>
+
             </div>
 
             <!-- 盤源列表 -->
