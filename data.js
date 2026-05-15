@@ -27,4 +27,13 @@ const rawItems = [
                     numPhotos: 5,      // 總共5張：photo1.jpg + photo2.jpeg ~ photo7.jpeg
                     videoUrl: ''
                 },
+  {   
+                    id: 11, 
+                    type: 'images', 
+                    title: '港圖灣', 
+                    tags: [ '2房半高層', '602呎', '1150萬', '樓盤編號:002531', '日期:15/5/2026'], 
+                    baseFolder: 'id12',
+                    numPhotos: 8,      // 總共5張：photo1.jpg + photo2.jpeg ~ photo7.jpeg
+                    videoUrl: ''
+                },
 ];
